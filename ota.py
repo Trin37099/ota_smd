@@ -7,6 +7,7 @@ from openpyxl import load_workbook
 import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
+import plotly.graph_objs as go
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -52,6 +53,7 @@ def perform(all):
     all1['Room Type'] = all1['Room Type'].replace(' ', 'UNKNOWN ROOM')
     all1['Room Type'] = all1['Room Type'].str.strip()
     all1['ADR'] = (all1['Total price']/all1['Length of stay'])/all1['Quantity']
+    all1['RN'] = all1['Length of stay']*all1['Quantity']
 
     all2 = all1[['Booking reference'
                  ,'Guest names'
@@ -63,6 +65,7 @@ def perform(all):
                  ,'ADR'
                  ,'Length of stay'
                  ,'Lead time'
+                 ,'RN'
                  ,'Quantity','Room Type']]
     return all2
 
@@ -71,6 +74,7 @@ channels = all2['Channel'].unique()
 room_type_options = all2['Room Type'].unique().tolist()
 
 counts = all2[['Channel', 'Room Type']].groupby(['Channel', 'Room Type']).size().reset_index(name='Count')
+total_count = counts['Count'].sum()
 
 fig = px.treemap(counts, path=['Channel', 'Room Type'], values='Count', color='Count',color_continuous_scale='YlOrRd')
 st.plotly_chart(fig)
@@ -103,15 +107,21 @@ filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['Lead time']
 st.bar_chart(filtered_df_pi)
 filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['Length of stay'])
 st.bar_chart(filtered_df_pi)
+filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['RN'])
+st.bar_chart(filtered_df_pi)
 
 st.markdown('**Pivot table by lead time**')
 filtered_df_pi = pd.pivot_table(filtered_df, index='Lead time',values=['ADR'])
 st.bar_chart(filtered_df_pi)
 filtered_df_pi = pd.pivot_table(filtered_df, index='Lead time',values=['Length of stay'])
 st.bar_chart(filtered_df_pi)
+filtered_df_pi = pd.pivot_table(filtered_df, index='Lead time',values=['RN'])
+st.bar_chart(filtered_df_pi)
 
 st.markdown('**Pivot table by LOS**')
 filtered_df_pi = pd.pivot_table(filtered_df, index='Length of stay',values=['ADR'])
 st.bar_chart(filtered_df_pi)
 filtered_df_pi = pd.pivot_table(filtered_df, index='Length of stay',values=['Lead time'])
+st.bar_chart(filtered_df_pi)
+filtered_df_pi = pd.pivot_table(filtered_df, index='Length of stay',values=['RN'])
 st.bar_chart(filtered_df_pi)
