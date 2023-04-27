@@ -125,3 +125,11 @@ filtered_df_pi = pd.pivot_table(filtered_df, index='Length of stay',values=['Lea
 st.bar_chart(filtered_df_pi)
 filtered_df_pi = pd.pivot_table(filtered_df, index='Length of stay',values=['RN'])
 st.bar_chart(filtered_df_pi)
+
+st.markdown('**Pivot table by RN**')
+filtered_df_pi = pd.pivot_table(filtered_df, index='RN',values=['ADR'])
+st.bar_chart(filtered_df_pi)
+filtered_df_pi = pd.pivot_table(filtered_df, index='RN',values=['Length of stay'])
+st.bar_chart(filtered_df_pi)
+filtered_df_pi = pd.pivot_table(filtered_df, index='RN',values=['Lead time'])
+st.bar_chart(filtered_df_pi)
