@@ -70,10 +70,9 @@ all2 =  perform(all)
 channels = all2['Channel'].unique()
 room_type_options = all2['Room Type'].unique().tolist()
 
-fig = px.pie(all2['Channel'].value_counts()
-             , values=all2['Channel'].value_counts()
-             , names=all2['Channel'].value_counts().index)
+counts = all2[['Channel', 'Room Type']].groupby(['Channel', 'Room Type']).size().reset_index(name='Count')
 
+fig = px.treemap(counts, path=['Channel', 'Room Type'], values='Count', color='Count',color_continuous_scale='YlOrRd')
 st.plotly_chart(fig)
 
 channels = all2['Channel'].unique()
@@ -94,17 +93,25 @@ else:
     else:
         filtered_df = all2
 
-fig1 = px.pie(filtered_df['Room Type'].value_counts()
-             , values=filtered_df['Room Type'].value_counts()
-             , names=filtered_df['Room Type'].value_counts().index)
-
 st.write(filtered_df)
-st.plotly_chart(fig1)
 st.write(filtered_df.describe())
 
+st.markdown('**Pivot table by Booked**')
 filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
 st.bar_chart(filtered_df_pi)
 filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['Lead time'])
 st.bar_chart(filtered_df_pi)
 filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['Length of stay'])
+st.bar_chart(filtered_df_pi)
+
+st.markdown('**Pivot table by lead time**')
+filtered_df_pi = pd.pivot_table(filtered_df, index='Lead time',values=['ADR'])
+st.bar_chart(filtered_df_pi)
+filtered_df_pi = pd.pivot_table(filtered_df, index='Lead time',values=['Length of stay'])
+st.bar_chart(filtered_df_pi)
+
+st.markdown('**Pivot table by LOS**')
+filtered_df_pi = pd.pivot_table(filtered_df, index='Length of stay',values=['ADR'])
+st.bar_chart(filtered_df_pi)
+filtered_df_pi = pd.pivot_table(filtered_df, index='Length of stay',values=['Lead time'])
 st.bar_chart(filtered_df_pi)
