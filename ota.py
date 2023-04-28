@@ -37,9 +37,10 @@ def perform(all):
     all1["Check-in"] = pd.to_datetime(all1["Check-in"])
     all1['Booked-on date'] = pd.to_datetime(all1['Booked-on date'], format='%Y/%m/%d')
     all1['Booked'] = all1['Booked-on date'].dt.strftime('%m/%d/%Y')
+    all1['Booked'] = pd.to_datetime(all1['Booked'])
     all1["Check-out"] = pd.to_datetime(all1["Check-out"])
     all1["Length of stay"] = (all1["Check-out"] - all1["Check-in"]).dt.days
-    all1["Lead time"] = (all1["Check-in"] - all1["Booked-on date"]).dt.days
+    all1["Lead time"] = (all1["Check-in"] - all1["Booked"]).dt.days
 
     all1['Room'] = all1['Room'].str.upper()
     all1['Booking reference'] = all1['Booking reference'].astype('str')
@@ -79,26 +80,42 @@ total_count = counts['Count'].sum()
 fig = px.treemap(counts, path=['Channel', 'Room Type'], values='Count', color='Count',color_continuous_scale='YlOrRd')
 st.plotly_chart(fig)
 
+#start_date = st.sidebar.date_input('Start date', pd.to_datetime(all2['Check-in']).min())
+#end_date = st.sidebar.date_input('End date', pd.to_datetime(all2['Check-out']).max())
 channels = all2['Channel'].unique()
 room_type_options =   all2['Room Type'].unique().tolist()
-selected_channel = st.sidebar.selectbox('Select channel', ['All'] + list(channels))
-selected_room_types = st.sidebar.multiselect('Select room types', room_type_options,default=room_type_options)
+selected_channels = st.sidebar.multiselect('Select channels', channels, default=channels)
+selected_room_types = st.sidebar.multiselect('Select room types', room_type_options, default=room_type_options)
 
 
-if selected_channel != 'All':
-    filtered_df = all2[all2['Channel'] == selected_channel]
+
+if selected_channels:
+    filtered_df = all2[all2['Channel'].isin(selected_channels)]
     if selected_room_types:
         if 'All' not in selected_room_types:
             filtered_df = filtered_df[filtered_df['Room Type'].isin(selected_room_types)]
-else:
-    if selected_room_types:
-        if 'All' not in selected_room_types:
-            filtered_df = all2[all2['Room Type'].isin(selected_room_types)]
     else:
-        filtered_df = all2
+        if selected_room_types:
+            if 'All' not in selected_room_types:
+                filtered_df = all2[all2['Room Type'].isin(selected_room_types)]
+else:
+    filtered_df = all2
 
 st.write(filtered_df)
 st.write(filtered_df.describe())
+
+filtered_df['Booked'] = pd.to_datetime(filtered_df['Booked'])
+filtered_df['Day Name'] = filtered_df['Booked'].dt.strftime('%A')
+filtered_df['Week of Year'] = filtered_df['Booked'].dt.weekofyear
+
+st.markdown('**count Booking in week of Year (calendar)**')
+pt = filtered_df.pivot_table(index='Week of Year', columns='Day Name', aggfunc='size', fill_value=0)
+if set(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']).issubset(filtered_df['Day Name'].unique()):
+    pt = filtered_df.pivot_table(index='Week of Year', columns='Day Name', aggfunc='size', fill_value=0)
+    pt = pt[['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']]
+    st.write(pt.style.background_gradient(cmap='coolwarm', axis=1))
+else:
+    st.write('Not enough data to create a pivot table')
 
 st.markdown('**Pivot table by Booked**')
 filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
