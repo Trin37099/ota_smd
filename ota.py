@@ -121,7 +121,7 @@ with col2:
     st.markdown('## GUIDE')
     st.markdown('**-You can multiselect Channels. If you do not select anything, It would be All Channels**')
     st.markdown('**-You can multiselect Room Type. If you do not select anything, It would be All Room Type**')
-    st.markdown('NOTE: Some Room Type it is difference name but it is same type EX. DELUXE DOUBLE OR TWIN = DELUXE DOUBLE TWIN ')
+    st.markdown('NOTE: Some Room Type it is difference name but it is same type EX. DELUXE DOUBLE OR TWIN = DELUXE TWIN ')
 
 month_dict = {v: k for k,v in enumerate(calendar.month_name)}
 months = list(calendar.month_name)[1:]
