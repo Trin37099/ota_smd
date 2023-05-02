@@ -27,7 +27,7 @@ for uploaded_file in uploaded_files:
     all = pd.read_csv(uploaded_file,thousands=',')
 
 def clean_room_type(room_type):
-    if ' X ' in room_type:
+    if ' X '  in room_type:
         room_type = 'MIXED ROOM'
     return room_type
 
@@ -66,6 +66,7 @@ def perform(all):
     all1['Room Type'] = all1['Room Type'].replace('', 'UNKNOWN ROOM')
     all1['Room Type'] = all1['Room Type'].str.strip()
     all1['ADR'] = (all1['Total price']/all1['Length of stay'])/all1['Quantity']
+    all1.loc[(all1['Channel']=='Expedia') | (all1['Channel']=='Booking.com'),'ADR'] = all1['ADR'] *0.82
     all1['RN'] = all1['Length of stay']*all1['Quantity']
 
     all2 = all1[['Booking reference'
@@ -121,15 +122,24 @@ with col2:
     st.markdown('## GUIDE')
     st.markdown('**-You can multiselect Channels. If you do not select anything, It would be All Channels**')
     st.markdown('**-You can multiselect Room Type. If you do not select anything, It would be All Room Type**')
-    st.markdown('NOTE: Some Room Type it is difference name but it is same type EX. DELUXE DOUBLE OR TWIN = DELUXE TWIN ')
+    st.markdown('NOTE: Some Room Type it is difference name but it is same type EX. DELUXE DOUBLE OR TWIN = DELUXE TWIN and Discount commission rate 18%')
 
 month_dict = {v: k for k,v in enumerate(calendar.month_name)}
 months = list(calendar.month_name)[1:]
 selected_month = st.multiselect('Select a month', months)
-if selected_month:
-    selected_month_nums = [month_dict[month_name] for month_name in selected_month]
-    filtered_df = filtered_df[filtered_df['Booked'].dt.month.isin(selected_month_nums)]
-
+col1, col2 = st.columns(2)
+with col1:
+    if selected_month:
+        selected_month_nums = [month_dict[month_name] for month_name in selected_month]
+        filtered_df = filtered_df[filtered_df['Booked'].dt.month.isin(selected_month_nums)]
+with col2:
+    filter_rn = st.checkbox('Filter by Roomnight')
+    if filter_rn:
+        min_val, max_val = int(filtered_df['RN'].min()), int(filtered_df['RN'].max())
+        rn_min, rn_max = st.slider('Select a range of roomnights', min_val, max_val, (min_val, max_val))
+        filtered_df = filtered_df[(filtered_df['RN'] >= rn_min) & (filtered_df['RN'] <= rn_max)]
+    else:
+        filtered_df = filtered_df.copy()
 
 tab1, tab2, tab3 ,tab4, tab5= st.tabs(["Average", "Median", "Statistic",'Data','Bar Chart'])
 with tab1:
