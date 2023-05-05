@@ -135,7 +135,7 @@ with tab1:
 
     col1 , col2 ,col3 = st.columns(3)
     with col2:
-        filter_LT = st.checkbox('Filter by LT')
+        filter_LT = st.checkbox('Filter by LT ')
         if filter_LT:
             min_val, max_val = int(filtered_df['Lead time'].min()), int(filtered_df['Lead time'].max())
             LT_min, LT_max = st.slider('Select a range of LT', min_val, max_val, (min_val, max_val))
@@ -143,7 +143,7 @@ with tab1:
         else:
             filtered_df = filtered_df.copy()
     with col1:
-        filter_LOS = st.checkbox('Filter by LOS')
+        filter_LOS = st.checkbox('Filter by LOS ')
         if filter_LOS:
             min_val, max_val = int(filtered_df['Length of stay'].min()), int(filtered_df['Length of stay'].max())
             LOS_min, LOS_max = st.slider('Select a range of LOS', min_val, max_val, (min_val, max_val))
