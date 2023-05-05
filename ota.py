@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
 import plotly.graph_objs as go
+import plotly.colors as pc
 import re
 import warnings
 import calendar
@@ -128,12 +129,28 @@ with tab1:
     month_dict = {v: k for k,v in enumerate(calendar.month_name)}
     months = list(calendar.month_name)[1:]
     selected_month = st.multiselect('Select a month', months)
-    col1, col2 = st.columns(2)
-    with col1:
-        if selected_month:
+    if selected_month:
             selected_month_nums = [month_dict[month_name] for month_name in selected_month]
             filtered_df = filtered_df[filtered_df['Booked'].dt.month.isin(selected_month_nums)]
+
+    col1 , col2 ,col3 = st.columns(3)
     with col2:
+        filter_LT = st.checkbox('Filter by LT')
+        if filter_LT:
+            min_val, max_val = int(filtered_df['Lead time'].min()), int(filtered_df['Lead time'].max())
+            LT_min, LT_max = st.slider('Select a range of LT', min_val, max_val, (min_val, max_val))
+            filtered_df = filtered_df[(filtered_df['Lead time'] >= LT_min) & (filtered_df['Lead time'] <= LT_max)]
+        else:
+            filtered_df = filtered_df.copy()
+    with col1:
+        filter_LOS = st.checkbox('Filter by LOS')
+        if filter_LOS:
+            min_val, max_val = int(filtered_df['Length of stay'].min()), int(filtered_df['Length of stay'].max())
+            LOS_min, LOS_max = st.slider('Select a range of LOS', min_val, max_val, (min_val, max_val))
+            filtered_df = filtered_df[(filtered_df['Length of stay'] >= LOS_min) & (filtered_df['Length of stay'] <= LOS_max)]
+        else:   
+            filtered_df = filtered_df.copy()
+    with col3:
         filter_rn = st.checkbox('Filter by Roomnight')
         if filter_rn:
             min_val, max_val = int(filtered_df['RN'].min()), int(filtered_df['RN'].max())
@@ -141,6 +158,21 @@ with tab1:
             filtered_df = filtered_df[(filtered_df['RN'] >= rn_min) & (filtered_df['RN'] <= rn_max)]
         else:
             filtered_df = filtered_df.copy()
+
+    col1, col2 = st.columns(2)
+    channels = filtered_df['Channel'].unique()
+    num_colors = len(channels)
+    colors = px.colors.qualitative.Plotly
+    color_scale =  {channel: colors[i % num_colors] for i, channel in enumerate(channels)}
+    with col1:
+        grouped = filtered_df.groupby(['Booked', 'Channel']).size().reset_index(name='counts')
+        fig = px.bar(grouped, x='Booked', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+        st.plotly_chart(fig)
+    with col2:
+        grouped = filtered_df.groupby(['Lead time', 'Channel']).size().reset_index(name='counts')
+        fig = px.bar(grouped, x='Lead time', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+        st.plotly_chart(fig)
+
 
     tab1, tab2, tab3 ,tab4, tab5 , tab6 ,tab7= st.tabs(["Average", "Median", "Statistic",'Data'
                                                     ,'Bar Chart','Room roomnight by channel'
@@ -306,13 +338,41 @@ if selected_month:
         selected_month_nums = [month_dict[month_name] for month_name in selected_month]
         filtered_df = filtered_df[filtered_df['Stay'].dt.month.isin(selected_month_nums)]
 
-filter_LT = st.checkbox('Filter by LT')
-if filter_LT:
-    min_val, max_val = int(filtered_df['Lead time'].min()), int(filtered_df['Lead time'].max())
-    LT_min, LT_max = st.slider('Select a range of LT', min_val, max_val, (min_val, max_val))
-    filtered_df = filtered_df[(filtered_df['Lead time'] >= LT_min) & (filtered_df['Lead time'] <= LT_max)]
-else:
-    filtered_df = filtered_df.copy()
+col1 , col2 = st.columns(2)
+with col2:
+    filter_LT = st.checkbox('Filter by LT')
+    if filter_LT:
+        min_val, max_val = int(filtered_df['Lead time'].min()), int(filtered_df['Lead time'].max())
+        LT_min, LT_max = st.slider('Select a range of LT', min_val, max_val, (min_val, max_val))
+        filtered_df = filtered_df[(filtered_df['Lead time'] >= LT_min) & (filtered_df['Lead time'] <= LT_max)]
+    else:
+        filtered_df = filtered_df.copy()
+with col1:
+    filter_LOS = st.checkbox('Filter by LOS')
+    if filter_LOS:
+        min_val, max_val = int(filtered_df['Length of stay'].min()), int(filtered_df['Length of stay'].max())
+        LOS_min, LOS_max = st.slider('Select a range of LOS', min_val, max_val, (min_val, max_val))
+        filtered_df = filtered_df[(filtered_df['Length of stay'] >= LOS_min) & (filtered_df['Length of stay'] <= LOS_max)]
+    else:
+        filtered_df = filtered_df.copy()
+
+st.markdown('**You can zoom in**')
+col1, col2 = st.columns(2)
+channels = filtered_df['Channel'].unique()
+num_colors = len(channels)
+colors = px.colors.qualitative.Plotly
+color_scale =  {channel: colors[i % num_colors] for i, channel in enumerate(channels)}
+with col1:
+    grouped = filtered_df.groupby(['Stay', 'Channel']).size().reset_index(name='counts')
+    fig = px.bar(grouped, x='Stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+    st.plotly_chart(fig)
+with col2:
+    grouped = filtered_df.groupby(['Lead time', 'Channel']).size().reset_index(name='counts')
+    fig = px.bar(grouped, x='Lead time', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+    st.plotly_chart(fig)
+
+
+
 col1, col2 = st.columns(2)
 with col1:
     st.markdown('**count Stay in week of Year (calendar)**')
@@ -333,4 +393,6 @@ with col2:
         st.write(pt.style.format("{:.2f}").background_gradient(cmap='coolwarm', axis=1))
     else:
         st.write('Not enough data to create a pivot table')
+
+
 
