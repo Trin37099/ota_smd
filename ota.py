@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
 import plotly.graph_objs as go
-import plotly.colors as pc
 import re
 import warnings
 import calendar
@@ -103,7 +102,7 @@ room_type_options =   all2['Room Type'].unique().tolist()
 selected_channels = st.sidebar.multiselect('Select channels', channels, default=channels)
 selected_room_types = st.sidebar.multiselect('Select room types', room_type_options, default=room_type_options)
 
-tab1, tab2 = st.tabs(['Book on date','Stay on date'])
+tab1, tab_stay = st.tabs(['Book on date','Stay on date'])
 with tab1:
     if selected_channels:
         filtered_df = all2[all2['Channel'].isin(selected_channels)]
@@ -265,52 +264,182 @@ with tab1:
     with t1:
         filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
         st.bar_chart(filtered_df_pi)
+        col1, col2 = st.columns(2)
+        with col1:
+            grouped = filtered_df.groupby(['Booked', 'ADR']).size().reset_index(name='counts')
+            fig = px.bar(grouped, x='Booked', y='counts', color='ADR',color_discrete_map=color_scale, barmode='stack')
+            st.plotly_chart(fig)
+        with col2:
+            grouped = filtered_df.groupby(['Booked', 'Channel']).size().reset_index(name='counts')
+            fig = px.bar(grouped, x='Booked', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+            st.plotly_chart(fig)
+
     with t2:
         filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['Lead time'])
         st.bar_chart(filtered_df_pi)
+        col1, col2 = st.columns(2)
+        with col1:
+            grouped = filtered_df.groupby(['Booked', 'Lead time']).size().reset_index(name='counts')
+            fig = px.bar(grouped, x='Booked', y='counts', color='Lead time',color_discrete_map=color_scale, barmode='stack')
+            st.plotly_chart(fig)
+        with col2:
+            grouped = filtered_df.groupby(['Booked', 'Channel']).size().reset_index(name='counts')
+            fig = px.bar(grouped, x='Booked', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+            st.plotly_chart(fig)
     with t3:
         filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['Length of stay'])
         st.bar_chart(filtered_df_pi)
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            grouped = filtered_df.groupby(['Booked', 'Length of stay']).size().reset_index(name='counts')
+            fig = px.bar(grouped, x='Booked', y='counts', color='Length of stay',color_discrete_map=color_scale, barmode='stack')
+            st.plotly_chart(fig)
+        with col2:
+            grouped = filtered_df.groupby(['Booked', 'Channel']).size().reset_index(name='counts')
+            fig = px.bar(grouped, x='Booked', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+            st.plotly_chart(fig)
     with t4:
         filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['RN'])
         st.bar_chart(filtered_df_pi)
+
+        col1, col2 = st.columns(2)
+        with col1:
+            grouped = filtered_df.groupby(['Booked', 'RN']).size().reset_index(name='counts')
+            fig = px.bar(grouped, x='Booked', y='counts', color='RN',color_discrete_map=color_scale, barmode='stack')
+            st.plotly_chart(fig)
+        with col2:
+            grouped = filtered_df.groupby(['Booked', 'Channel']).size().reset_index(name='counts')
+            fig = px.bar(grouped, x='Booked', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+            st.plotly_chart(fig)
 
     st.markdown('**Pivot table by lead time**')
     t1,t2,t3 = st.tabs(['ADR','LOS','RN'])
     with t1:
         filtered_df_pi = pd.pivot_table(filtered_df, index='Lead time',values=['ADR'])
         st.bar_chart(filtered_df_pi)
+
+        col1, col2 = st.columns(2)
+        with col1:
+            grouped = filtered_df.groupby(['Lead time', 'ADR']).size().reset_index(name='counts')
+            fig = px.bar(grouped, x='Lead time', y='counts', color='ADR',color_discrete_map=color_scale, barmode='stack')
+            st.plotly_chart(fig)
+        with col2:
+            grouped = filtered_df.groupby(['Lead time', 'Channel']).size().reset_index(name='counts')
+            fig = px.bar(grouped, x='Lead time', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+            st.plotly_chart(fig)
     with t2:
         filtered_df_pi = pd.pivot_table(filtered_df, index='Lead time',values=['Length of stay'])
         st.bar_chart(filtered_df_pi)
+
+        col1, col2 = st.columns(2)
+        with col1:
+            grouped = filtered_df.groupby(['Lead time', 'Length of stay']).size().reset_index(name='counts')
+            fig = px.bar(grouped, x='Lead time', y='counts', color='Length of stay',color_discrete_map=color_scale, barmode='stack')
+            st.plotly_chart(fig)
+        with col2:
+            grouped = filtered_df.groupby(['Lead time', 'Channel']).size().reset_index(name='counts')
+            fig = px.bar(grouped, x='Lead time', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+            st.plotly_chart(fig)
     with t3:
         filtered_df_pi = pd.pivot_table(filtered_df, index='Lead time',values=['RN'])
         st.bar_chart(filtered_df_pi)
+
+        col1, col2 = st.columns(2)
+        with col1:
+            grouped = filtered_df.groupby(['Lead time', 'RN']).size().reset_index(name='counts')
+            fig = px.bar(grouped, x='Lead time', y='counts', color='RN',color_discrete_map=color_scale, barmode='stack')
+            st.plotly_chart(fig)
+        with col2:
+            grouped = filtered_df.groupby(['Lead time', 'Channel']).size().reset_index(name='counts')
+            fig = px.bar(grouped, x='Lead time', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+            st.plotly_chart(fig)
 
     st.markdown('**Pivot table by LOS**')
     t1,t2,t3 = st.tabs(['ADR','LT','RN'])
     with t1:
         filtered_df_pi = pd.pivot_table(filtered_df, index='Length of stay',values=['ADR'])
         st.bar_chart(filtered_df_pi)
+
+        col1, col2 = st.columns(2)
+        with col1:
+            grouped = filtered_df.groupby(['Length of stay', 'ADR']).size().reset_index(name='counts')
+            fig = px.bar(grouped, x='Length of stay', y='counts', color='ADR',color_discrete_map=color_scale, barmode='stack')
+            st.plotly_chart(fig)
+        with col2:
+            grouped = filtered_df.groupby(['Length of stay', 'Channel']).size().reset_index(name='counts')
+            fig = px.bar(grouped, x='Length of stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+            st.plotly_chart(fig)
     with t2:
         filtered_df_pi = pd.pivot_table(filtered_df, index='Length of stay',values=['Lead time'])
         st.bar_chart(filtered_df_pi)
+
+        col1, col2 = st.columns(2)
+        with col1:
+            grouped = filtered_df.groupby(['Length of stay', 'Lead time']).size().reset_index(name='counts')
+            fig = px.bar(grouped, x='Length of stay', y='counts', color='Lead time',color_discrete_map=color_scale, barmode='stack')
+            st.plotly_chart(fig)
+        with col2:
+            grouped = filtered_df.groupby(['Length of stay', 'Channel']).size().reset_index(name='counts')
+            fig = px.bar(grouped, x='Length of stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+            st.plotly_chart(fig)
     with t3:
         filtered_df_pi = pd.pivot_table(filtered_df, index='Length of stay',values=['RN'])
         st.bar_chart(filtered_df_pi)
+
+        col1, col2 = st.columns(2)
+        with col1:
+            grouped = filtered_df.groupby(['Length of stay', 'RN']).size().reset_index(name='counts')
+            fig = px.bar(grouped, x='Length of stay', y='counts', color='RN',color_discrete_map=color_scale, barmode='stack')
+            st.plotly_chart(fig)
+        with col2:
+            grouped = filtered_df.groupby(['Length of stay', 'Channel']).size().reset_index(name='counts')
+            fig = px.bar(grouped, x='Length of stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+            st.plotly_chart(fig)
 
     st.markdown('**Pivot table by RN**')
     t1,t2,t3 = st.tabs(['ADR','LOS','LT'])
     with t1:
         filtered_df_pi = pd.pivot_table(filtered_df, index='RN',values=['ADR'])
         st.bar_chart(filtered_df_pi)
+
+        col1, col2 = st.columns(2)
+        with col1:
+            grouped = filtered_df.groupby(['RN', 'ADR']).size().reset_index(name='counts')
+            fig = px.bar(grouped, x='RN', y='counts', color='ADR',color_discrete_map=color_scale, barmode='stack')
+            st.plotly_chart(fig)
+        with col2:
+            grouped = filtered_df.groupby(['RN', 'Channel']).size().reset_index(name='counts')
+            fig = px.bar(grouped, x='RN', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+            st.plotly_chart(fig)
     with t2:
         filtered_df_pi = pd.pivot_table(filtered_df, index='RN',values=['Length of stay'])
         st.bar_chart(filtered_df_pi)
+
+        col1, col2 = st.columns(2)
+        with col1:
+            grouped = filtered_df.groupby(['RN', 'Length of stay']).size().reset_index(name='counts')
+            fig = px.bar(grouped, x='RN', y='counts', color='Length of stay',color_discrete_map=color_scale, barmode='stack')
+            st.plotly_chart(fig)
+        with col2:
+            grouped = filtered_df.groupby(['RN', 'Channel']).size().reset_index(name='counts')
+            fig = px.bar(grouped, x='RN', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+            st.plotly_chart(fig)
     with t3:
         filtered_df_pi = pd.pivot_table(filtered_df, index='RN',values=['Lead time'])
         st.bar_chart(filtered_df_pi)
-with tab2:
+
+        col1, col2 = st.columns(2)
+        with col1:
+            grouped = filtered_df.groupby(['RN', 'Lead time']).size().reset_index(name='counts')
+            fig = px.bar(grouped, x='RN', y='counts', color='Lead time',color_discrete_map=color_scale, barmode='stack')
+            st.plotly_chart(fig)
+        with col2:
+            grouped = filtered_df.groupby(['RN', 'Channel']).size().reset_index(name='counts')
+            fig = px.bar(grouped, x='RN', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+            st.plotly_chart(fig)
+
+with tab_stay:
     all3 =  perform(all)
     if selected_channels:
         filtered_df = all3[all3['Channel'].isin(selected_channels)]
@@ -393,6 +522,5 @@ with col2:
         st.write(pt.style.format("{:.2f}").background_gradient(cmap='coolwarm', axis=1))
     else:
         st.write('Not enough data to create a pivot table')
-
 
 
