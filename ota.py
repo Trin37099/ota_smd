@@ -344,7 +344,7 @@ with tab1:
         
     filtered_df['Booked'] = pd.to_datetime(filtered_df['Booked'])
     filtered_df['Day Name'] = filtered_df['Booked'].dt.strftime('%A')
-    filtered_df['Week of Year'] = filtered_df['Booked'].dt.weekofyear
+    filtered_df['Week of Year'] = filtered_df['Booked'].dt.isocalendar().week
 
 
     col1, col2 = st.columns(2)
@@ -613,7 +613,7 @@ filtered_df = filtered_df.explode('Stay').reset_index(drop=True)
 filtered_df = filtered_df[['Stay','Check-in','Guest names','Channel','ADR','Length of stay','Lead time','Lead time range','RN','Quantity','Room Type']]
 #all3['Total discount'] = all3["ADR"]*all3["Length of stay"]*all3["Quantity"]
 filtered_df['Day Name'] = filtered_df['Stay'].dt.strftime('%A')
-filtered_df['Week of Year'] = filtered_df['Stay'].dt.weekofyear
+filtered_df['Week of Year'] = filtered_df['Stay'].dt.isocalendar().week
 
 month_dict = {v: k for k,v in enumerate(calendar.month_name)}
 months = list(calendar.month_name)[1:]
