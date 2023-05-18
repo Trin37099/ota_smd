@@ -161,7 +161,10 @@ with tab1:
     col1, col2 = st.columns(2)
     channels = filtered_df['Channel'].unique()
     num_colors = len(channels)
-    colors = px.colors.qualitative.Plotly
+    existing_colors = ['#636EFA', '#EF553B', '#00CC96', '#AB63FA', '#FFA15A', '#19D3F3', '#FF6692', '#B6E880', '#FF97FF', '#6392FF']
+    additional_colors = ['#FFD700', '#8B008B', '#00FF00']
+    combined_colors = existing_colors + additional_colors
+    colors = combined_colors
     color_scale =  {channel: colors[i % num_colors] for i, channel in enumerate(channels)}
     with col1:
         grouped = filtered_df.groupby(['Booked', 'Channel']).size().reset_index(name='counts')
@@ -489,7 +492,10 @@ st.markdown('**You can zoom in**')
 col1, col2 = st.columns(2)
 channels = filtered_df['Channel'].unique()
 num_colors = len(channels)
-colors = px.colors.qualitative.Plotly
+existing_colors = ['#636EFA', '#EF553B', '#00CC96', '#AB63FA', '#FFA15A', '#19D3F3', '#FF6692', '#B6E880', '#FF97FF', '#6392FF']
+additional_colors = ['#FFD700', '#8B008B', '#00FF00']
+combined_colors = existing_colors + additional_colors
+colors = combined_colors
 color_scale =  {channel: colors[i % num_colors] for i, channel in enumerate(channels)}
 with col1:
     grouped = filtered_df.groupby(['Stay', 'Channel']).size().reset_index(name='counts')
