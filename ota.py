@@ -362,7 +362,7 @@ with tab1:
         filtered_df1 =filtered_df[['Booked','RN']]
         df_grouped = filtered_df1.groupby('Booked').sum().reset_index()
         pivot_df = df_grouped.pivot_table(values='RN'
-                                  , index=df_grouped['Booked'].dt.weekofyear
+                                  , index=df_grouped['Booked'].dt.isocalendar().week
                                   , columns=df_grouped['Booked'].dt.day_name(), aggfunc='sum', fill_value=0)
         st.markdown('**count Roomnight in week of Year (calendar)**')
         if set(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']).issubset(filtered_df['Day Name'].unique()):
