@@ -32,7 +32,7 @@ def clean_room_type(room_type):
         room_type = 'MIXED ROOM'
     return room_type
 
-hotel_select = st.selectbox("Hotel", ["THE GRASS", "ASTER",'Amber PTY','ALTERA'])
+hotel_select = st.selectbox("Hotel", ["THE GRASS", "ASTER",'Amber PTY','ALTERA','ARDEN'])
 if hotel_select == "THE GRASS":
     def convert_room_type(room_type):
         if re.search(r'\bCITY VIEW ONE BEDROOM SUITE\b|\bONE GRASS SUITE CITY VIEW ROOM\b', room_type):
@@ -103,6 +103,24 @@ elif hotel_select == "ALTERA":
             return 'DELUXE TWIN POOL VIEW'
         elif re.search(r'\bGRAND SUITE ROOM TWIN BED WITH KITCHENETTE\b|\bGRAND SUITE TWIN\b|\bTWIN GRAND TWIN\b', room_type):
             return 'GRAND SUITE ROOM TWIN BED WITH KITCHENETTE'
+        elif re.search(r'\bMIXED ROOM\b', room_type):
+            return 'MIXED'
+        else:
+            return 'UNKNOWN'
+elif hotel_select == "ARDEN":
+    def convert_room_type(room_type):
+        if re.search(r'\bDELUXE CITY VIEW\b|\bห้องดีลักซ์เตียงใหญ่หรือเตียงแฝดพร้อมวิวเมือง\b|\bDELUXE ROOM, CITY VIEW\b|\bDOUBLE OR TWIN DELUXE CITY VIEW DOUBLE OR TWIN\b|\bDELUXE CITY VIEW\b|\bDELUXE CITY VIEW ROOM\b|\bDELUXE CITY VIEW  (DOUBLE OR TWIN)\b|\bDELUXE CITY VIEW ROOM ONLY (DOUBLE 0R TWIN)\b', room_type):
+            return 'DELUXE CITY VIEW'
+        elif re.search(r'\bDELUXE POOL VIEW TWIN\b|\bห้องดีลักซ์เตียงใหญ่หรือเตียงแฝดพร้อมทัศนียภาพของสระว่ายน้ำ\b|\bDELUXE POOL VIEW\(TWIN BED\)\b|\bDELUXE POOL VIEW ROOM \(TWIN\)\b|\bห้องดีลักซ์เตียงแฝดพร้อมวิวสระว่ายน้ำ\b|\bDELUXE POOL VIEW ROOM ONLY \(TWIN\)\b|\bDELUXE POOL VIEW TWIN\b|\bDELUXE POOL VIEW ROOM ONLY \(TWIN\)\b|\bTWIN DELUXE POOL VIEW TWIN ROOM\b|\bDELUXE POOL VIEW ROOM WITH TWIN BED\b', room_type):
+            return 'DELUXE POOL VIEW TWIN'
+        elif re.search(r'\bDELUXE POOL VIEW\b|\bDOUBLE DELUXE POOL VIEW DOUBLE ROOM\b|\bDELUXE ROOM, POOL VIEW\b|\bDELUXE POOL VIEW\b|\bDELUXE ROOM WITH POOL VIEW\b|\bDELUXE POOL VIEW ROOM ONLY (DOUBLE)\b|\bDELUXE POOL VIEW ROOM WITH DOUBLE BED\b|\bDELUXE POOL VIEW TWIN\b|\bDELUXE POOL VIEW  (DOUBLE)\b|\bDELUXE ROOM ONLY (DOUBLE)\b|\bDELUXE POOL VIEW(DOUBLE BED)\b', room_type):
+            return 'DELUXE POOL VIEW'
+        elif re.search(r'\bDOUBLE DELUXE DOUBLE ROOM\b|\bห้องดีลักซ์เตียงใหญ่\b|\bDELUXE\b|\DELUXE ROOM\b|\bDELUXE (RO)\b|\bDELUXE  (DOUBLE)\b|\bDELUXE DOUBLE ROOM (BALCONY)\b', room_type):
+            return 'DELUXE'
+        elif re.search(r'\bEXCLUSIVE FAMILY SUITES\b|\bห้องสวีทแบบสองห้องนอน\b|\bFAMILY ROOM\b|\bEXCLUSIVE FAMILY SUITE\b|\bFAMILY ROOM FAMILY TWO BEDROOMS\b|\bEXCLUSIVE FAMILY SUITES ROOM ONLY (DOUBLE)\b|\bEXCLUSIVE FAMILY SUITES  (DOUBLE)\b|\bEXECUTIVE FAMILY SUIT\b', room_type):
+            return 'EXCLUSIVE FAMILY SUITES'
+        elif re.search(r'\bEXCLUSIVE SUITES\b|\bห้องเอ็กเซ็กคูทีฟสวีท\b|\bEXCLUSIVE SUITE\b|\bEXCLUSIVE SUITES\b|\bEXCLUSIVE SUITES ROOM ONLY (DOUBLE)\b', room_type):
+            return 'EXCLUSIVE SUITES'
         elif re.search(r'\bMIXED ROOM\b', room_type):
             return 'MIXED'
         else:
