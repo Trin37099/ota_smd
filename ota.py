@@ -43,7 +43,7 @@ def perform(all):
     all1 = all1.dropna()
 
     all1["Check-in"] = pd.to_datetime(all1["Check-in"])
-    all1['Booked-on date'] = pd.to_datetime(all1['Booked-on date'],format='%d/%m/%Y %H:%M:%S')
+    all1['Booked-on date'] = pd.to_datetime(all1['Booked-on date'], format='%d/%m/%Y %H:%M:%S')
     all1['Booked'] = all1['Booked-on date'].dt.strftime('%d/%m/%Y')
     all1['Booked'] = pd.to_datetime(all1['Booked'])
     all1["Check-out"] = pd.to_datetime(all1["Check-out"])
