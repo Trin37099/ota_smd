@@ -440,7 +440,7 @@ with tab1:
         col0, col1, col2, col4 = st.columns(4)
         filtered_df['ADR discount'] = filtered_df["ADR"]*filtered_df["Length of stay"]*filtered_df["Quantity"]
         col0.metric('**Revenue**',f'{round(filtered_df["ADR discount"].sum(),4)}')
-        col4.metric('**ADR with discount commission**',f'{round(filtered_df["ADR"].mean(),4)}',)
+        col4.metric('**ADR with discount Commission and ABF**',f'{round(filtered_df["ADR"].mean(),4)}',)
         col1.metric("**A.LT**", f'{round(filtered_df["Lead time"].mean(),4)}')
         col2.metric("**A.LOS**", f'{round(filtered_df["Length of stay"].mean(),4)}')
     with tab2:
