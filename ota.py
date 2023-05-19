@@ -45,6 +45,18 @@ if hotel_select == "THE GRASS":
             return 'MIXED'
         else:
             return 'UNKNOWN ROOM TYPE'
+    def apply_discount(channel, adr):
+        if channel == 'Booking.com':
+            return adr * 0.82
+        elif channel == 'Expedia':
+            return adr * 0.83
+        else:
+            return adr
+    def calculate_adr_per_rn_abf(row):
+        if row['RO/ABF'] == 'ABF':
+            return row['ADR'] - 260
+        else:
+            return row['ADR']
 elif hotel_select == "ASTER":
     def convert_room_type(room_type):
         if re.search(r'\bGRAND CORNER SUITE\b|\bGRAND CORNER SUITE ROOM\b|\bCORNER SUITE\b', room_type):
@@ -61,6 +73,18 @@ elif hotel_select == "ASTER":
             return 'MIXED'
         else:
             return 'UNKNOWN ROOM TYPE'
+    def apply_discount(channel, adr):
+        if channel == 'Booking.com':
+            return adr * 0.82
+        elif channel == 'Expedia':
+            return adr * 0.83
+        else:
+            return adr
+    def calculate_adr_per_rn_abf(row):
+        if row['RO/ABF'] == 'ABF':
+            return row['ADR'] - 260
+        else:
+            return row['ADR']
 elif hotel_select == "Amber PTY":
     def convert_room_type(room_type):
         if re.search(r'\bGRAND CORNER SUITE\b|\bGRAND CORNER SUITE ROOM\b|\bCORNER SUITE\b', room_type):
@@ -85,6 +109,18 @@ elif hotel_select == "Amber PTY":
             return 'MIXED'
         else:
             return 'UNKNOWN ROOM TYPE'
+    def apply_discount(channel, adr):
+        if channel == 'Booking.com':
+            return adr * 0.82
+        elif channel == 'Expedia':
+            return adr * 0.83
+        else:
+            return adr
+    def calculate_adr_per_rn_abf(row):
+        if row['RO/ABF'] == 'ABF':
+            return row['ADR'] - 260
+        else:
+            return row['ADR']
 elif hotel_select == "ALTERA":
     def convert_room_type(room_type):
         if re.search(r'\bBEDROOM FAMILY SUITE WITH KITCHENETTE\b',room_type):
@@ -109,6 +145,18 @@ elif hotel_select == "ALTERA":
             return 'MIXED'
         else:
             return 'UNKNOWN'
+    def apply_discount(channel, adr):
+        if channel == 'Booking.com':
+            return adr * 0.82
+        elif channel == 'Expedia':
+            return adr * 0.83
+        else:
+            return adr
+    def calculate_adr_per_rn_abf(row):
+        if row['RO/ABF'] == 'ABF':
+            return row['ADR'] - 260
+        else:
+            return row['ADR']
 elif hotel_select == "ARDEN":
     def convert_room_type(room_type):
         if re.search(r'\bDELUXE CITY VIEW\b|\bห้องดีลักซ์เตียงใหญ่หรือเตียงแฝดพร้อมวิวเมือง\b|\bDELUXE ROOM, CITY VIEW\b|\bDOUBLE OR TWIN DELUXE CITY VIEW DOUBLE OR TWIN\b|\bDELUXE CITY VIEW\b|\bDELUXE CITY VIEW ROOM\b|\bDELUXE CITY VIEW  (DOUBLE OR TWIN)\b|\bDELUXE CITY VIEW ROOM ONLY (DOUBLE 0R TWIN)\b', room_type):
@@ -127,6 +175,18 @@ elif hotel_select == "ARDEN":
             return 'MIXED'
         else:
             return 'UNKNOWN'
+    def apply_discount(channel, adr):
+        if channel == 'Booking.com':
+            return adr * 0.82
+        elif channel == 'Expedia':
+            return adr * 0.83
+        else:
+            return adr
+    def calculate_adr_per_rn_abf(row):
+        if row['RO/ABF'] == 'ABF':
+            return row['ADR'] - 260
+        else:
+            return row['ADR']
 elif hotel_select == "AMBER 85":
     def convert_room_type(room_type):
         if re.search(r'\bGRAND DELUXE ROOM\b|\bGRAND DELUXE\b|\bGRAND DELUXE DOUBLE ROOM\b|\bGRAND DELUXE ROOM ONLY\b|\bGRAND DOUBLE OR TWIN ROOM\b|\bDOUBLE GRAND DELUXE DOUBLE ROOM\b', room_type):
@@ -141,6 +201,18 @@ elif hotel_select == "AMBER 85":
             return 'MIXED'
         else:
             return 'UNKNOWN'
+    def apply_discount(channel, adr):
+        if channel == 'Booking.com':
+            return adr * 0.82
+        elif channel == 'Expedia':
+            return adr * 0.80
+        else:
+            return adr
+    def calculate_adr_per_rn_abf(row):
+        if row['RO/ABF'] == 'ABF':
+            return row['ADR'] - 260
+        else:
+            return row['ADR']
 elif hotel_select == 'ARBOUR':
     def convert_room_type(room_type):
         if re.search(r'\bDELUXE KING ROOM\b|\bDELUXE KING\b|\bDELUXE CITY VIEW KING\b|\bROOM DELUXE KING BED\b|\bDELUXE  KING ROOM\b|\bDELUXE KING ROOM ONLY\b|\bห้องดีลักซ์เตียงคิงไซส์\b', room_type):
@@ -171,6 +243,18 @@ elif hotel_select == 'ARBOUR':
             return 'MIXED'
         else:
             return 'UNKNOWN'
+    def apply_discount(channel, adr):
+        if channel == 'Booking.com':
+            return adr * 0.82
+        elif channel == 'Expedia':
+            return adr * 0.83
+        else:
+            return adr
+    def calculate_adr_per_rn_abf(row):
+        if row['RO/ABF'] == 'ABF':
+            return row['ADR'] - 300
+        else:
+            return row['ADR']
 def convert_RF(room_type):
     if re.search(r'\bNON REFUNDABLE\b|\bไม่สามารถคืนเงินจอง\b|\bNON REFUND\b|\bNON-REFUNDABLE\b|\bNRF\b', room_type):
         return 'NRF'
@@ -181,6 +265,17 @@ def convert_RF(room_type):
     else:
         return 'Flexible'
 
+def convert_ABF(room_type):
+    if re.search(r'\bBREAKFAST\b|\bWITH BREAKFAST\b|\bBREAKFAST INCLUDED\b', room_type):
+        return 'ABF'
+    elif re.search(r'\bUNKNOWN ROOM\b', room_type):
+        return 'UNKNOWN'
+    elif  room_type == "1 X " or room_type == "2 X " or room_type == "3 X " or room_type == "4 X ":
+        return 'UNKNOWN'
+    elif re.search(r'\bRO\b|\bROOM ONLY\b', room_type):
+        return 'RO'
+    else:
+        return 'RO'
     
 def perform(all): 
     all1 = all[['Booking reference'
@@ -217,14 +312,16 @@ def perform(all):
     all1['Room Type'] = all1['Room Type'].apply(clean_room_type)
     all1['Room Type'] = all1['Room Type'].apply(lambda x: convert_room_type(x))
     all1['F/NRF'] = all1['Room'].apply(lambda x: convert_RF(x))
+    all1['RO/ABF'] = all1['Room'].apply(lambda x: convert_ABF(x))
     #all1['Room Type'] = all1['Room Type'].str.replace('(NRF)', '').apply(lambda x: x.replace('()', ''))
     #all1['Room Type'] = all1['Room Type'].str.replace('WITH BREAKFAST', '')
     #all1['Room Type'] = all1['Room Type'].str.replace('ROOM ONLY', '')
     #all1['Room Type'] = all1['Room Type'].replace('', 'UNKNOWN ROOM')
     #all1['Room Type'] = all1['Room Type'].str.strip()
     all1['ADR'] = (all1['Total price']/all1['Length of stay'])/all1['Quantity']
-    all1.loc[(all1['Channel']=='Expedia') | (all1['Channel']=='Booking.com'),'ADR'] = all1['ADR'] *0.82
+    all1['ADR'] = all1.apply(lambda row: apply_discount(row['Channel'], row['ADR']), axis=1)
     all1['RN'] = all1['Length of stay']*all1['Quantity']
+    all1['ADR'] = all1.apply(calculate_adr_per_rn_abf, axis=1)
 
     all2 = all1[['Booking reference'
                  ,'Guest names'
@@ -240,6 +337,7 @@ def perform(all):
                  ,'Quantity'
                  ,'Room'
                  ,'Room Type'
+                 ,'RO/ABF'
                  ,'F/NRF'
                  ,'Lead time range']]
     return all2
@@ -275,14 +373,14 @@ with tab1:
     else:
         filtered_df = all2
 
-    col1, col2 = st.columns([2.5,1])
+    col1, col2 = st.columns(2)
     with col1:
         st.plotly_chart(fig, use_container_width=True)
     with col2:
         st.markdown('## GUIDE')
         st.markdown('**-You can multiselect Channels. If you do not select anything, It would be All Channels**')
         st.markdown('**-You can multiselect Room Type. If you do not select anything, It would be All Room Type**')
-        st.markdown('NOTE: Some Room Type it is difference name but it is same type EX. DELUXE DOUBLE OR TWIN = DELUXE TWIN and Discount commission rate 18%')
+        st.markdown('NOTE: Some Room Type it is difference name but it is same type EX. DELUXE DOUBLE OR TWIN = DELUXE TWIN and Discount commission')
 
     month_dict = {v: k for k,v in enumerate(calendar.month_name)}
     months = list(calendar.month_name)[1:]
@@ -335,9 +433,9 @@ with tab1:
         fig = px.bar(grouped, x='Lead time range', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
         st.plotly_chart(fig,use_container_width=True)
         
-    tab1, tab2, tab3 ,tab4, tab5 , tab6 ,tab7,tab8= st.tabs(["Average", "Median", "Statistic",'Data'
+    tab1, tab2, tab3 ,tab4, tab5 , tab6 ,tab7,tab8,tab9= st.tabs(["Average", "Median", "Statistic",'Data'
                                                     ,'Bar Chart','Room roomnight by channel'
-                                                    ,'Room revenue by channel','Flexible/NRF'])
+                                                    ,'Room revenue by channel','Flexible/NRF','RO/ABF'])
     with tab1:
         col0, col1, col2, col4 = st.columns(4)
         filtered_df['ADR discount'] = filtered_df["ADR"]*filtered_df["Length of stay"]*filtered_df["Quantity"]
@@ -404,6 +502,11 @@ with tab1:
         counts = all2[['Channel','F/NRF']].groupby(['Channel', 'F/NRF']).size().reset_index(name='Count')
         total_count = counts['Count'].sum()
         fig = px.treemap(counts, path=['Channel', 'F/NRF'], values='Count', color='Count',color_continuous_scale='YlOrRd')
+        st.plotly_chart(fig)
+    with tab9:
+        counts = all2[['Channel','RO/ABF']].groupby(['Channel', 'RO/ABF']).size().reset_index(name='Count')
+        total_count = counts['Count'].sum()
+        fig = px.treemap(counts, path=['Channel', 'RO/ABF'], values='Count', color='Count',color_continuous_scale='YlOrRd')
         st.plotly_chart(fig)
         
     filtered_df['Booked'] = pd.to_datetime(filtered_df['Booked'])
