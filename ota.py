@@ -724,6 +724,7 @@ with tab1:
     with t4:
         los_counts = filtered_df['Lead time range'].value_counts().reset_index()
         custom_order = ['-one', 'zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', '8-14', '14-30', '31-90', '90-120', '120+']
+        st.write(los_counts)
         los_counts['sorting_order'] = pd.Categorical(los_counts['index'], categories=custom_order, ordered=True)
         df_sorted = los_counts.sort_values('sorting_order')
         df_sorted = df_sorted.drop('sorting_order', axis=1).reset_index(drop=True)
