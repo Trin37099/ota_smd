@@ -648,7 +648,7 @@ with tab1:
             st.plotly_chart(fig,use_container_width=True)
 
     st.markdown('**Pivot table by lead time**')
-    t1,t2,t3,t4 = st.tabs(['ADR','LOS','RN','Pie chart'])
+    t1,t2,t3,t4 = st.tabs(['ADR','LOS','RN','Portion'])
     with t1:
         col1, col2 = st.columns(2)
         #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
@@ -758,7 +758,7 @@ with tab1:
         col2.plotly_chart(fig1,use_container_width=True)
 
     st.markdown('**Pivot table by LOS**')
-    t1,t2,t3,t4= st.tabs(['ADR','LT','RN','Pie chart'])
+    t1,t2,t3,t4= st.tabs(['ADR','LT','RN','Portion'])
     with t1:
         col1, col2 = st.columns(2)
         #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
@@ -858,8 +858,8 @@ with tab1:
         los_counts1['Percentage'] = (los_counts1['count'] / total_count1) * 100
         df_sorted1['Percentage'] = (df_sorted1['count'] / total_count1) * 100
         los_counts1 = los_counts1[['LOS range','Percentage']]
-        fig = px.bar(df_sorted1, x='LOS range', y='Percentage', title='Length of stay Range Distribution',text_auto=True,color='index',color_discrete_map=color_mapping)
-        fig1 = px.bar(los_counts1, x='LOS range', y='Percentage', title='Length of stay Range Distribution (Sorted)',text_auto=True,color='index',color_discrete_map=color_mapping)
+        fig = px.bar(df_sorted1, x='LOS range', y='Percentage', title='Length of stay Range Distribution',text_auto=True,color='LOS range',color_discrete_map=color_mapping)
+        fig1 = px.bar(los_counts1, x='LOS range', y='Percentage', title='Length of stay Range Distribution (Sorted)',text_auto=True,color='LOS range',color_discrete_map=color_mapping)
         fig.update_layout(xaxis_title='Length of stay Range', yaxis_title='Percentage')
         fig1.update_layout(xaxis_title='Length of stay Range', yaxis_title='Percentage')
         col1, col2 = st.columns(2)
