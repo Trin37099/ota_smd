@@ -725,14 +725,14 @@ with tab1:
         los_counts = filtered_df['Lead time range'].value_counts().reset_index()
         custom_order = ['-one', 'zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', '8-14', '14-30', '31-90', '90-120', '120+']
         st.write(los_counts)
-        los_counts['sorting_order'] = pd.Categorical(los_counts['index'], categories=custom_order, ordered=True)
+        los_counts['sorting_order'] = pd.Categorical(los_counts['Lead time range'], categories=custom_order, ordered=True)
         df_sorted = los_counts.sort_values('sorting_order')
         df_sorted = df_sorted.drop('sorting_order', axis=1).reset_index(drop=True)
         total_count = df_sorted['Lead time range'].sum()
         total_count1 = los_counts['Lead time range'].sum()
         los_counts['Percentage'] = (los_counts['Lead time range'] / total_count1) * 100
         df_sorted['Percentage'] = (df_sorted['Lead time range'] / total_count1) * 100
-        los_counts = los_counts[['index','Percentage']]
+        los_counts = los_counts[['Lead time range','Percentage']]
         color_mapping = {
                         '-one': '#99f3bd',
                         'zero': '#fbaccc',
@@ -749,8 +749,8 @@ with tab1:
                         '90-120': '#424949',
                         '120+': '#FF5733'
                     }
-        fig = px.bar(df_sorted, x='index', y='Percentage', title='Lead Time Range Distribution',text_auto=True,color='index',color_discrete_map=color_mapping)
-        fig1 = px.bar(los_counts, x='index', y='Percentage', title='Lead Time Range Distribution (Sorted)',text_auto=True,color='index',color_discrete_map=color_mapping)
+        fig = px.bar(df_sorted, x='Lead time range', y='Percentage', title='Lead Time Range Distribution',text_auto=True,color='Lead time range',color_discrete_map=color_mapping)
+        fig1 = px.bar(los_counts, x='Lead time range', y='Percentage', title='Lead Time Range Distribution (Sorted)',text_auto=True,color='Lead time range',color_discrete_map=color_mapping)
         fig.update_layout(xaxis_title='Lead Time Range', yaxis_title='Percentage')
         fig1.update_layout(xaxis_title='Lead Time Range', yaxis_title='Percentage')
         col1, col2 = st.columns(2)
