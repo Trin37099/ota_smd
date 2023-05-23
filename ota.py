@@ -37,7 +37,7 @@ if hotel_select == "THE GRASS":
     def convert_room_type(room_type):
         if re.search(r'\bCITY VIEW ONE BEDROOM SUITE\b|\bONE GRASS SUITE CITY VIEW ROOM\b', room_type):
             return 'ONE GRASS SUITE CITY VIEW'
-        elif re.search(r'\bห้องสวีทแบบสองห้องนอน\b|\bTWO-BEDROOM SUITE\b|\bTWO GRASS SUITE ROOM\b|\bTWO BEDROOM SUITE\b|\bTWO GRASS SUITE\b', room_type):
+        elif re.search(r'\bห้องสวีทแบบสองห้องนอน\b|\bTWO-BEDROOM SUITE\b|\bBEDROOM SUITE\b|\bTWO GRASS SUITE ROOM\b|\bTWO BEDROOM SUITE\b|\bTWO GRASS SUITE\b|TWO', room_type):
             return 'TWO GRASS SUITE'
         elif re.search(r'\bห้องสวีท\b|\bSUITE\b|\bONE GRASS SUITE ROOM\b|\bONE BEDROOM SUITE\b|\bSUITE ONE GRASS SERVICE SUITE\b|\bSUITE ONE\b', room_type):
             return 'ONE GRASS SUITE'
@@ -133,7 +133,7 @@ elif hotel_select == "ALTERA":
             return 'GRAND SUITE'
         elif re.search(r'\bGRAND SUITE POOL VIEW ROOM\b|\bGRAND SUITE POOL VIEW ROOM WITH KITCHENETTE\b|\bGRAND POOL VIEW SUITE WITH KITCHENETTE\b|\bGRAND SUITE WITH POOL VIEW\b|\bSUITE GRAND POOL VIEW\b|\bGRAND SUITE POOL VIEW WITH KITCHENETTE\b|\bGRAND SUITES POOL VIEW ROOM WITH KITCHENETTE\b|\bGRAND SUITE POOL VIEW ROOM DOUBLE BED WITH KITCHENETTE\b', room_type):
             return 'GRAND SUITE POOL VIEW'
-        elif re.search(r'\bTWO BEDROOM SUITE\b|\bBEDROOM FAMILY SUITE WITH KITCHENETTE\b|\bFAMILY SUITE TWO BEDROOM WITH KITCHENETTE\b|\bFAMILY TWO\b|\bFAMILY ROOM FAMILY TWO BEDROOMS\b|\bFAMILY SUITES TWO BEDROOM\b|\bTWO BEDROOM FAMILY SUITE WITH KITCHENETTE\b', room_type):
+        elif re.search(r'\bTWO BEDROOM SUITE\b|\bBEDROOM FAMILY SUITE WITH KITCHENETTE\b|\bFAMILY SUITE TWO BEDROOM WITH KITCHENETTE\b|\bFAMILY TWO\b|\bFAMILY ROOM FAMILY TWO BEDROOMS\b|\bFAMILY SUITES TWO BEDROOM\b|\bTWO BEDROOM FAMILY SUITE WITH KITCHENETTE\b|TWO', room_type):
             return 'TWO BEDROOM SUITE'
         elif re.search(r'\bDELUXE CITY VIEW ROOM\b|\bDELUXE DOUBLE OR TWIN ROOM WITH CITY VIEW\b|\bDELUXE CITY VIEW ROOM\b|\bDELUXE CITY VIEW ROOM WITH KITCHENETTE\b|\bDELUXE CITY VIEW ROOM DOUBLE OR TWIN BED WITH KITCHENETTE\b|\bDOUBLE OR TWIN DELUXE CITY VIEW DOUBLE OR TWIN\b', room_type):
             return 'DELUXE CITY VIEW'
@@ -233,7 +233,7 @@ elif hotel_select == 'ARBOUR':
             return 'PREMIER CITY VIEW'
         elif re.search(r'\bPREMIER HIGH FLOOR\b|\bPREMIER DOUBLE ROOM\b|\bROOM PREMIER\b|\bPREMIER DOUBLE BED\b|\bPREMIER HIGH FLOOR ROOM WITH VIEW\b|\bPREMIER ROOM\b|\bPREMIER HIGH FLOOR CITY VIEW ROOM ONLY\b|\bPREMIER ROOM ONLY\b|\bPREMIER HIGH FLOOR CITY VIEW ROOM ONLY\b|\bROOM PREMIER HIGH FLOOR\b|\bห้องพรีเมียร์เตียงใหญ่ชั้นสูงพร้อมวิวเมือง\b|\bห้องพรีเมียร์เตียงใหญ่\b', room_type):
             return 'PREMIER HIGH FLOOR'
-        elif re.search(r'\bTWO BEDROOM SUITES\b|\bTWO\b|\bTWO BEDROOM SUITE\b|\bTWO BEDROOM SUITES\b|\bFAMILY SUITE, 2 BEDROOMS\b|\bTWO BEDROOM SUITE OCEAN VIEW\b|\bSUITE TWO BEDROOM SUITES\b|\bห้องสวีทแบบสองห้องนอนพร้อมวิวทะเล\b', room_type):
+        elif re.search(r'\bTWO BEDROOM SUITES\b|\bTWO\b|\bTWO BEDROOM SUITE\b|\bTWO BEDROOM SUITES\b|\bFAMILY SUITE, 2 BEDROOMS\b|\bTWO BEDROOM SUITE OCEAN VIEW\b|\bSUITE TWO BEDROOM SUITES\b|\bห้องสวีทแบบสองห้องนอนพร้อมวิวทะเล\b|TWO', room_type):
             return 'TWO BEDROOM SUITE'
         elif re.search(r'\bPENTHOUSE SUITE WITH PRIVATE POOL\b|\bPENTHOUSE SUITE WITH PRIVATE POOL\b|\bSUITE PENTHOUSE SUITE WITH PRIVATE POOL\b', room_type):
             return 'PENTHOUSE SUITE'
@@ -296,8 +296,11 @@ def perform(all):
     all1["Length of stay"] = (all1["Check-out"] - all1["Check-in"]).dt.days
     all1["Lead time"] = (all1["Check-in"] - all1["Booked"]).dt.days
     value_ranges = [-1, 0, 1, 2, 3, 4, 5, 6, 7,8, 14, 30, 90, 120]
+    value_ranges1 = [1,2,3, 4,5,6,7,8,9,10,14,30,45,60]
     labels = ['-one', 'zero', 'one', 'two', 'three', 'four', 'five', 'six','seven', '8-14', '14-30', '31-90', '90-120', '120+']
+    labels1 = ['one', 'two', 'three', 'four', 'five', 'six','seven','eight', 'nine', 'ten', '14-30', '30-45','45-60', '60+']
     all1['Lead time range'] = pd.cut(all1['Lead time'], bins=value_ranges + [float('inf')], labels=labels, right=False)
+    all1['LOS range'] = pd.cut(all1['Length of stay'], bins=value_ranges1 + [float('inf')], labels=labels1, right=False)
 
     all1['Room'] = all1['Room'].str.upper()
     all1['Booking reference'] = all1['Booking reference'].astype('str')
@@ -339,7 +342,8 @@ def perform(all):
                  ,'Room Type'
                  ,'RO/ABF'
                  ,'F/NRF'
-                 ,'Lead time range']]
+                 ,'Lead time range'
+                 ,'LOS range']]
     return all2
 
 all2 =  perform(all)
@@ -424,9 +428,13 @@ with tab1:
     colors = combined_colors
     color_scale =  {channel: colors[i % num_colors] for i, channel in enumerate(channels)}
     color_scale1 =  {channel: colors[i % num_colors] for i, channel in enumerate(channels)}
+    grouped = filtered_df.groupby(['Booked', 'Channel']).size().reset_index(name='counts')
+    fig = px.bar(grouped, x='Booked', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+    st.plotly_chart(fig,use_container_width=True)
+    col1, col2 = st.columns(2)
     with col1:
-        grouped = filtered_df.groupby(['Booked', 'Channel']).size().reset_index(name='counts')
-        fig = px.bar(grouped, x='Booked', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+        grouped = filtered_df.groupby(['Length of stay', 'Channel']).size().reset_index(name='counts')
+        fig = px.bar(grouped, x='Length of stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
         st.plotly_chart(fig, use_container_width=True)
     with col2:
         grouped = filtered_df.groupby(['Lead time range', 'Channel']).size().reset_index(name='counts')
@@ -715,13 +723,38 @@ with tab1:
             st.plotly_chart(fig,use_container_width=True)
     with t4:
         los_counts = filtered_df['Lead time range'].value_counts().reset_index()
-        los_counts.columns = ['Lead time range', 'Count']
-        los_counts = los_counts.sort_values('Lead time range')
-        fig = px.pie(los_counts, values='Count', names='Lead time range', 
-             title='Lead time range Distribution',
-             hole=0.4)
-        fig.update_traces(textposition='outside', textinfo='percent+label')
-        st.plotly_chart(fig,use_container_width=True)
+        custom_order = ['-one', 'zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', '8-14', '14-30', '31-90', '90-120', '120+']
+        los_counts['sorting_order'] = pd.Categorical(los_counts['index'], categories=custom_order, ordered=True)
+        df_sorted = los_counts.sort_values('sorting_order')
+        df_sorted = df_sorted.drop('sorting_order', axis=1).reset_index(drop=True)
+        total_count = df_sorted['Lead time range'].sum()
+        total_count1 = los_counts['Lead time range'].sum()
+        los_counts['Percentage'] = (los_counts['Lead time range'] / total_count1) * 100
+        df_sorted['Percentage'] = (df_sorted['Lead time range'] / total_count1) * 100
+        los_counts = los_counts[['index','Percentage']]
+        color_mapping = {
+                        '-one': '#99f3bd',
+                        'zero': '#fbaccc',
+                        'one': '#a8df65',
+                        'two': '#ff7b54',
+                        'three': '#FFC300',
+                        'four': '#7FB3D5',
+                        'five': '#C70039',
+                        'six': '#900C3F',
+                        'seven': '#581845',
+                        '8-14': '#9C640C',
+                        '14-30': '#154360',
+                        '31-90': '#512E5F',
+                        '90-120': '#424949',
+                        '120+': '#FF5733'
+                    }
+        fig = px.bar(df_sorted, x='index', y='Percentage', title='Lead Time Range Distribution',text_auto=True,color='index',color_discrete_map=color_mapping)
+        fig1 = px.bar(los_counts, x='index', y='Percentage', title='Lead Time Range Distribution (Sorted)',text_auto=True,color='index',color_discrete_map=color_mapping)
+        fig.update_layout(xaxis_title='Lead Time Range', yaxis_title='Percentage')
+        fig1.update_layout(xaxis_title='Lead Time Range', yaxis_title='Percentage')
+        col1, col2 = st.columns(2)
+        col1.plotly_chart(fig,use_container_width=True)
+        col2.plotly_chart(fig1,use_container_width=True)
 
     st.markdown('**Pivot table by LOS**')
     t1,t2,t3,t4= st.tabs(['ADR','LT','RN','Pie chart'])
@@ -798,14 +831,38 @@ with tab1:
             fig = px.bar(grouped, x='Length of stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
             st.plotly_chart(fig,use_container_width=True)
     with t4:
-        los_counts = filtered_df['Length of stay'].value_counts().reset_index()
-        los_counts.columns = ['Length of stay', 'Count']
-        los_counts = los_counts.sort_values('Length of stay')
-        fig = px.pie(los_counts, values='Count', names='Length of stay', 
-             title='Length of Stay Distribution',
-             hole=0.4)
-        fig.update_traces(textposition='outside', textinfo='percent+label')
-        st.plotly_chart(fig,use_container_width=True)
+        los_counts1 = filtered_df['LOS range'].value_counts().reset_index()
+        custom_order1 = ['one', 'two', 'three', 'four', 'five', 'six','seven','eight', 'nine', 'ten', '14-30', '30-45', '60+']
+        los_counts1['sorting_order1'] = pd.Categorical(los_counts1['index'], categories=custom_order1, ordered=True)
+        df_sorted1 = los_counts1.sort_values('sorting_order1')
+        df_sorted1 = df_sorted1.drop('sorting_order1', axis=1).reset_index(drop=True)
+        total_count1 = df_sorted1['LOS range'].sum()
+        total_count1 = los_counts1['LOS range'].sum()
+        color_mapping = {
+        'one': '#99f3bd',
+        'two': '#fbaccc',
+        'three': '#a8df65',
+        'four': '#ff7b54',
+        'five': '#FFC300',
+        'six': '#7FB3D5',
+        'seven': '#FF5733',
+        'eight': '#C70039',
+        'nine': '#900C3F',
+        'ten': '#581845',
+        '14-30': '#9C640C',
+        '30-45': '#154360',
+        '60+': '#512E5F'
+        }
+        los_counts1['Percentage'] = (los_counts1['LOS range'] / total_count1) * 100
+        df_sorted1['Percentage'] = (df_sorted1['LOS range'] / total_count1) * 100
+        los_counts1 = los_counts1[['index','Percentage']]
+        fig = px.bar(df_sorted1, x='index', y='Percentage', title='Length of stay Range Distribution',text_auto=True,color='index',color_discrete_map=color_mapping)
+        fig1 = px.bar(los_counts1, x='index', y='Percentage', title='Length of stay Range Distribution (Sorted)',text_auto=True,color='index',color_discrete_map=color_mapping)
+        fig.update_layout(xaxis_title='Length of stay Range', yaxis_title='Percentage')
+        fig1.update_layout(xaxis_title='Length of stay Range', yaxis_title='Percentage')
+        col1, col2 = st.columns(2)
+        col1.plotly_chart(fig,use_container_width=True)
+        col2.plotly_chart(fig1,use_container_width=True)
 
     st.markdown('**Pivot table by RN**')
     t1,t2,t3 = st.tabs(['ADR','LOS','LT'])
@@ -896,20 +953,32 @@ with tab_stay:
     else:
         filtered_df = all3
 
-filtered_df['Stay'] = filtered_df.apply(lambda row: pd.date_range(row['Check-in'], row['Check-out']), axis=1)
+filtered_df['Stay'] = filtered_df.apply(lambda row: pd.date_range(row['Check-in'], row['Check-out']- pd.Timedelta(days=1)), axis=1)
 filtered_df = filtered_df.explode('Stay').reset_index(drop=True)
 filtered_df = filtered_df[['Stay','Check-in','Guest names','Channel','ADR','Length of stay','Lead time','Lead time range','RN','Quantity','Room Type']]
 #all3['Total discount'] = all3["ADR"]*all3["Length of stay"]*all3["Quantity"]
 filtered_df['Day Name'] = filtered_df['Stay'].dt.strftime('%A')
 filtered_df['Week of Year'] = filtered_df['Stay'].dt.isocalendar().week
 
-month_dict = {v: k for k,v in enumerate(calendar.month_name)}
+month_dict = {v: k for k, v in enumerate(calendar.month_name)}
 months = list(calendar.month_name)[1:]
 selected_month = st.multiselect('Select a month stay', months)
-if selected_month:
-        selected_month_nums = [month_dict[month_name] for month_name in selected_month]
-        filtered_df = filtered_df[filtered_df['Stay'].dt.month.isin(selected_month_nums)]
 
+# Assuming you have a select year input stored in the variable 'selected_year'
+selected_year = st.selectbox('Select a year', ['2022', '2023', '2024','2025','2026'])
+
+if selected_month and selected_year:
+    selected_month_nums = [month_dict[month_name] for month_name in selected_month]
+    filtered_df = filtered_df[
+        (filtered_df['Stay'].dt.month.isin(selected_month_nums)) &
+        (filtered_df['Stay'].dt.year == int(selected_year))
+    ]
+elif selected_month:
+    selected_month_nums = [month_dict[month_name] for month_name in selected_month]
+    filtered_df = filtered_df[filtered_df['Stay'].dt.month.isin(selected_month_nums)]
+elif selected_year:
+    filtered_df = filtered_df[filtered_df['Stay'].dt.year == int(selected_year)]
+    
 col1 , col2 = st.columns(2)
 with col2:
     filter_LT = st.checkbox('Filter by LT')
@@ -928,6 +997,13 @@ with col1:
     else:
         filtered_df = filtered_df.copy()
 
+st.markdown('**avg ADR without comm and ABF by channal and room type (if you do not filter month, it would be all month)**')
+df_january = filtered_df[['Stay','Channel','Room Type','ADR']]
+avg_adr = df_january.groupby(['Channel', 'Room Type'])['ADR'].mean()
+result = avg_adr.reset_index().pivot_table(values='ADR', index='Channel', columns='Room Type', fill_value='none')
+col1, col2, col3 = st.columns(3)
+col2.write(result.style.format("{:.2f}")) 
+ 
 st.markdown('**You can zoom in**')
 col1, col2 = st.columns(2)
 channels = filtered_df['Channel'].unique()
