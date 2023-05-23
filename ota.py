@@ -1004,7 +1004,7 @@ df_january = filtered_df[['Stay','Channel','Room Type','ADR']]
 avg_adr = df_january.groupby(['Channel', 'Room Type'])['ADR'].mean()
 result = avg_adr.reset_index().pivot_table(values='ADR', index='Channel', columns='Room Type', fill_value='none')
 col1, col2, col3 = st.columns(3)
-col2.write(result.style.format("{:.2f}")) 
+col2.write(result) 
  
 st.markdown('**You can zoom in**')
 col1, col2 = st.columns(2)
@@ -1023,7 +1023,6 @@ with col2:
     grouped = filtered_df.groupby(['Lead time range', 'Channel']).size().reset_index(name='counts')
     fig = px.bar(grouped, x='Lead time range', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
     st.plotly_chart(fig,use_container_width=True)
-
 
 
 col1, col2 = st.columns(2)
