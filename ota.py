@@ -1004,7 +1004,8 @@ df_january = filtered_df[['Stay','Channel','Room Type','ADR']]
 avg_adr = df_january.groupby(['Channel', 'Room Type'])['ADR'].mean()
 result = avg_adr.reset_index().pivot_table(values='ADR', index='Channel', columns='Room Type', fill_value='none')
 col1, col2, col3 = st.columns(3)
-col2.write(result) 
+result = result.applymap(lambda x: '{:.2f}'.format(x) if x != 'none' else 'none')
+col2.write(result,use_container_width=True)
  
 st.markdown('**You can zoom in**')
 col1, col2 = st.columns(2)
