@@ -724,7 +724,6 @@ with tab1:
     with t4:
         los_counts = filtered_df['Lead time range'].value_counts().reset_index()
         custom_order = ['-one', 'zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', '8-14', '14-30', '31-90', '90-120', '120+']
-        st.write(los_counts)
         los_counts['sorting_order'] = pd.Categorical(los_counts['Lead time range'], categories=custom_order, ordered=True)
         df_sorted = los_counts.sort_values('sorting_order')
         df_sorted = df_sorted.drop('sorting_order', axis=1).reset_index(drop=True)
@@ -967,7 +966,7 @@ months = list(calendar.month_name)[1:]
 selected_month = st.multiselect('Select a month stay', months)
 
 # Assuming you have a select year input stored in the variable 'selected_year'
-selected_year = st.selectbox('Select a year', ['2022', '2023', '2024','2025','2026'])
+selected_year = st.selectbox('Select a year', ['2022', '2023', '2024','2025','2026'], index=1)
 
 if selected_month and selected_year:
     selected_month_nums = [month_dict[month_name] for month_name in selected_month]
