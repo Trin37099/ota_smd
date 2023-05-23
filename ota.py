@@ -834,11 +834,12 @@ with tab1:
     with t4:
         los_counts1 = filtered_df['LOS range'].value_counts().reset_index()
         custom_order1 = ['one', 'two', 'three', 'four', 'five', 'six','seven','eight', 'nine', 'ten', '14-30', '30-45', '60+']
-        los_counts1['sorting_order1'] = pd.Categorical(los_counts1['index'], categories=custom_order1, ordered=True)
+        los_counts1['sorting_order1'] = pd.Categorical(los_counts1['LOS range'], categories=custom_order1, ordered=True)
         df_sorted1 = los_counts1.sort_values('sorting_order1')
         df_sorted1 = df_sorted1.drop('sorting_order1', axis=1).reset_index(drop=True)
-        total_count1 = df_sorted1['LOS range'].sum()
-        total_count1 = los_counts1['LOS range'].sum()
+        total_count1 = df_sorted1['count'].sum()
+        total_count1 = los_counts1['count'].sum()
+        
         color_mapping = {
         'one': '#99f3bd',
         'two': '#fbaccc',
@@ -854,11 +855,11 @@ with tab1:
         '30-45': '#154360',
         '60+': '#512E5F'
         }
-        los_counts1['Percentage'] = (los_counts1['LOS range'] / total_count1) * 100
-        df_sorted1['Percentage'] = (df_sorted1['LOS range'] / total_count1) * 100
-        los_counts1 = los_counts1[['index','Percentage']]
-        fig = px.bar(df_sorted1, x='index', y='Percentage', title='Length of stay Range Distribution',text_auto=True,color='index',color_discrete_map=color_mapping)
-        fig1 = px.bar(los_counts1, x='index', y='Percentage', title='Length of stay Range Distribution (Sorted)',text_auto=True,color='index',color_discrete_map=color_mapping)
+        los_counts1['Percentage'] = (los_counts1['count'] / total_count1) * 100
+        df_sorted1['Percentage'] = (df_sorted1['count'] / total_count1) * 100
+        los_counts1 = los_counts1[['LOS range','Percentage']]
+        fig = px.bar(df_sorted1, x='LOS range', y='Percentage', title='Length of stay Range Distribution',text_auto=True,color='index',color_discrete_map=color_mapping)
+        fig1 = px.bar(los_counts1, x='LOS range', y='Percentage', title='Length of stay Range Distribution (Sorted)',text_auto=True,color='index',color_discrete_map=color_mapping)
         fig.update_layout(xaxis_title='Length of stay Range', yaxis_title='Percentage')
         fig1.update_layout(xaxis_title='Length of stay Range', yaxis_title='Percentage')
         col1, col2 = st.columns(2)
