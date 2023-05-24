@@ -870,9 +870,9 @@ if uploaded_files:
                     col2.plotly_chart(fig1,use_container_width=True)
                 
             with tab_stay:
-                    all3 =  perform(all)
-                    if selected_channels:
-                        filtered_df = all3[all3['Channel'].isin(selected_channels)]
+                all3 =  perform(all)
+                if selected_channels:
+                    filtered_df = all3[all3['Channel'].isin(selected_channels)]
                         if selected_room_types:
                             if 'All' not in selected_room_types:
                                 filtered_df = filtered_df[filtered_df['Room Type'].isin(selected_room_types)]
@@ -880,7 +880,7 @@ if uploaded_files:
                             if selected_room_types:
                                 if 'All' not in selected_room_types:
                                     filtered_df = all3[all3['Room Type'].isin(selected_room_types)]
-                    else:
+                else:
                         filtered_df = all3
                 filtered_df['Stay'] = filtered_df.apply(lambda row: pd.date_range(row['Check-in'], row['Check-out']- pd.Timedelta(days=1)), axis=1)
                 filtered_df = filtered_df.explode('Stay').reset_index(drop=True)
