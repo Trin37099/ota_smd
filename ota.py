@@ -744,14 +744,14 @@ if uploaded_files:
                     with t4:
                         los_counts = filtered_df['Lead time range'].value_counts().reset_index()
                         custom_order = ['-one', 'zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', '8-14', '14-30', '31-90', '90-120', '120+']
-                        los_counts['sorting_order'] = pd.Categorical(los_counts['index'], categories=custom_order, ordered=True)
+                        los_counts['sorting_order'] = pd.Categorical(los_counts['count'], categories=custom_order, ordered=True)
                         df_sorted = los_counts.sort_values('sorting_order')
                         df_sorted = df_sorted.drop('sorting_order', axis=1).reset_index(drop=True)
                         total_count = df_sorted['Lead time range'].sum()
                         total_count1 = los_counts['Lead time range'].sum()
                         los_counts['Percentage'] = (los_counts['Lead time range'] / total_count1) * 100
                         df_sorted['Percentage'] = (df_sorted['Lead time range'] / total_count1) * 100
-                        los_counts = los_counts[['index','Percentage']]
+                        los_counts = los_counts[['count','Percentage']]
                         color_mapping = {
                                         '-one': '#99f3bd',
                                         'zero': '#fbaccc',
@@ -768,8 +768,8 @@ if uploaded_files:
                                         '90-120': '#424949',
                                         '120+': '#FF5733'
                                     }
-                        fig = px.bar(df_sorted, x='index', y='Percentage', title='Lead Time Range Distribution',text_auto=True,color='index',color_discrete_map=color_mapping)
-                        fig1 = px.bar(los_counts, x='index', y='Percentage', title='Lead Time Range Distribution (Sorted)',text_auto=True,color='index',color_discrete_map=color_mapping)
+                        fig = px.bar(df_sorted, x='count', y='Percentage', title='Lead Time Range Distribution',text_auto=True,color='count',color_discrete_map=color_mapping)
+                        fig1 = px.bar(los_counts, x='count', y='Percentage', title='Lead Time Range Distribution (Sorted)',text_auto=True,color='count',color_discrete_map=color_mapping)
                         fig.update_layout(xaxis_title='Lead Time Range', yaxis_title='Percentage')
                         fig1.update_layout(xaxis_title='Lead Time Range', yaxis_title='Percentage')
                         col1, col2 = st.columns(2)
@@ -853,7 +853,7 @@ if uploaded_files:
                     with t4:
                         los_counts1 = filtered_df['LOS range'].value_counts().reset_index()
                         custom_order1 = ['one', 'two', 'three', 'four', 'five', 'six','seven','eight', 'nine', 'ten', '14-30', '30-45', '60+']
-                        los_counts1['sorting_order1'] = pd.Categorical(los_counts1['index'], categories=custom_order1, ordered=True)
+                        los_counts1['sorting_order1'] = pd.Categorical(los_counts1['count'], categories=custom_order1, ordered=True)
                         df_sorted1 = los_counts1.sort_values('sorting_order1')
                         df_sorted1 = df_sorted1.drop('sorting_order1', axis=1).reset_index(drop=True)
                         total_count1 = df_sorted1['LOS range'].sum()
@@ -875,9 +875,9 @@ if uploaded_files:
                         }
                         los_counts1['Percentage'] = (los_counts1['LOS range'] / total_count1) * 100
                         df_sorted1['Percentage'] = (df_sorted1['LOS range'] / total_count1) * 100
-                        los_counts1 = los_counts1[['index','Percentage']]
-                        fig = px.bar(df_sorted1, x='index', y='Percentage', title='Length of stay Range Distribution',text_auto=True,color='index',color_discrete_map=color_mapping)
-                        fig1 = px.bar(los_counts1, x='index', y='Percentage', title='Length of stay Range Distribution (Sorted)',text_auto=True,color='index',color_discrete_map=color_mapping)
+                        los_counts1 = los_counts1[['count','Percentage']]
+                        fig = px.bar(df_sorted1, x='count', y='Percentage', title='Length of stay Range Distribution',text_auto=True,color='count',color_discrete_map=color_mapping)
+                        fig1 = px.bar(los_counts1, x='count', y='Percentage', title='Length of stay Range Distribution (Sorted)',text_auto=True,color='count',color_discrete_map=color_mapping)
                         fig.update_layout(xaxis_title='Length of stay Range', yaxis_title='Percentage')
                         fig1.update_layout(xaxis_title='Length of stay Range', yaxis_title='Percentage')
                         col1, col2 = st.columns(2)
