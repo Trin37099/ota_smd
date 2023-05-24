@@ -435,21 +435,42 @@ if uploaded_files:
                 color_scale =  {channel: colors[i % num_colors] for i, channel in enumerate(channels)}
                 color_scale1 =  {channel: colors[i % num_colors] for i, channel in enumerate(channels)}
                 
-                st.markdown('**Count booking by Channel**')
-                grouped = filtered_df.groupby(['Booked', 'Channel']).size().reset_index(name='counts')
-                fig = px.bar(grouped, x='Booked', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
-                st.plotly_chart(fig,use_container_width=True)
+                ch,rt = st.tabs(['Count Booked by Channel','Count Booked by Room type'])
+                with ch:
+                    st.markdown('**Count Booked by Channel**')
+                    grouped = filtered_df.groupby(['Booked', 'Channel']).size().reset_index(name='counts')
+                    fig = px.bar(grouped, x='Booked', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+                    st.plotly_chart(fig,use_container_width=True)
+                with rt:
+                    st.markdown('**Count Booked by Room type**')
+                    grouped = filtered_df.groupby(['Booked', 'Room Type']).size().reset_index(name='counts')
+                    fig = px.bar(grouped, x='Booked', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
+                    st.plotly_chart(fig,use_container_width=True)
                 col1, col2 = st.columns(2)
                 with col1:
-                    st.markdown('**Count LOS by Channel**')
-                    grouped = filtered_df.groupby(['Length of stay', 'Channel']).size().reset_index(name='counts')
-                    fig = px.bar(grouped, x='Length of stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
-                    st.plotly_chart(fig, use_container_width=True)
+                    ch,rt = st.tabs(['Count LOS by Channel','Count LoS by Room type'])
+                    with ch:
+                        st.markdown('**Count LOS by Channel**')
+                        grouped = filtered_df.groupby(['Length of stay', 'Channel']).size().reset_index(name='counts')
+                        fig = px.bar(grouped, x='Length of stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+                        st.plotly_chart(fig,use_container_width=True)
+                    with rt:
+                        st.markdown('**Count LOS by Room type**')
+                        grouped = filtered_df.groupby(['Length of stay', 'Room Type']).size().reset_index(name='counts')
+                        fig = px.bar(grouped, x='Length of stay', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
+                        st.plotly_chart(fig,use_container_width=True)
                 with col2:
-                    st.markdown('**Count LT by Channel**')
-                    grouped = filtered_df.groupby(['Lead time range', 'Channel']).size().reset_index(name='counts')
-                    fig = px.bar(grouped, x='Lead time range', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
-                    st.plotly_chart(fig,use_container_width=True)
+                    ch,rt = st.tabs(['Count LT by Channel','Count LT by Room type'])
+                    with ch:
+                        st.markdown('**Count LT by Channel**')
+                        grouped = filtered_df.groupby(['Lead time range', 'Channel']).size().reset_index(name='counts')
+                        fig = px.bar(grouped, x='Lead time range', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+                        st.plotly_chart(fig,use_container_width=True)
+                    with rt:
+                        st.markdown('**Count LT by Room type**')
+                        grouped = filtered_df.groupby(['Lead time range', 'Room Type']).size().reset_index(name='counts')
+                        fig = px.bar(grouped, x='Lead time range', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
+                        st.plotly_chart(fig,use_container_width=True)
                     
                 tab1, tab2, tab3 ,tab4, tab5 , tab6 ,tab7,tab0,tab8,tab9= st.tabs(["Average", "Median", "Statistic",'Data'
                                                                 ,'Bar Chart','Room roomnight by channel'
@@ -586,13 +607,22 @@ if uploaded_files:
                         col2.plotly_chart(fig, use_container_width=True)
                         col1, col2 = st.columns(2)
                         with col1:
+                            st.markdown('**Count ADR by booked**')
                             grouped = filtered_df.groupby(['Booked', 'ADR']).size().reset_index(name='counts')
                             fig = px.bar(grouped, x='Booked', y='counts', color='ADR',color_discrete_map=color_scale, barmode='stack')
                             st.plotly_chart(fig,use_container_width=True)
                         with col2:
-                            grouped = filtered_df.groupby(['Booked', 'Channel']).size().reset_index(name='counts')
-                            fig = px.bar(grouped, x='Booked', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
-                            st.plotly_chart(fig,use_container_width=True)
+                            ch,rt = st.tabs(['Count Booked by Channel','Count Booked by Room type'])
+                            with ch:
+                                st.markdown('**Count Booked by Channel**')
+                                grouped = filtered_df.groupby(['Booked', 'Channel']).size().reset_index(name='counts')
+                                fig = px.bar(grouped, x='Booked', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+                                st.plotly_chart(fig,use_container_width=True)
+                            with rt:
+                                st.markdown('**Count Booked by Room type**')
+                                grouped = filtered_df.groupby(['Booked', 'Room Type']).size().reset_index(name='counts')
+                                fig = px.bar(grouped, x='Booked', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
+                                st.plotly_chart(fig,use_container_width=True)
 
                     with t2:
                         col1, col2 = st.columns(2)
@@ -611,13 +641,22 @@ if uploaded_files:
                         col2.plotly_chart(fig, use_container_width=True)
                         col1, col2 = st.columns(2)
                         with col1:
+                            st.markdown('**Count LT by booked**')
                             grouped = filtered_df.groupby(['Booked', 'Lead time range']).size().reset_index(name='counts')
                             fig = px.bar(grouped, x='Booked', y='counts', color='Lead time range',color_discrete_map=color_scale, barmode='stack')
                             st.plotly_chart(fig,use_container_width=True)
                         with col2:
-                            grouped = filtered_df.groupby(['Booked', 'Channel']).size().reset_index(name='counts')
-                            fig = px.bar(grouped, x='Booked', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
-                            st.plotly_chart(fig,use_container_width=True)
+                            ch,rt = st.tabs(['Count Booked by Channel','Count Booked by Room type'])
+                            with ch:
+                                st.markdown('**Count Booked by Channel**')
+                                grouped = filtered_df.groupby(['Booked', 'Channel']).size().reset_index(name='counts')
+                                fig = px.bar(grouped, x='Booked', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+                                st.plotly_chart(fig,use_container_width=True)
+                            with rt:
+                                st.markdown('**Count Booked by Room type**')
+                                grouped = filtered_df.groupby(['Booked', 'Room Type']).size().reset_index(name='counts')
+                                fig = px.bar(grouped, x='Booked', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
+                                st.plotly_chart(fig,use_container_width=True)
                     with t3:
                         col1, col2 = st.columns(2)
                         #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
@@ -635,13 +674,22 @@ if uploaded_files:
                         col2.plotly_chart(fig, use_container_width=True)
                         col1, col2 = st.columns(2)
                         with col1:
+                            st.markdown('**Count LOS by booked**')
                             grouped = filtered_df.groupby(['Booked', 'Length of stay']).size().reset_index(name='counts')
                             fig = px.bar(grouped, x='Booked', y='counts', color='Length of stay',color_discrete_map=color_scale, barmode='stack')
                             st.plotly_chart(fig,use_container_width=True)
                         with col2:
-                            grouped = filtered_df.groupby(['Booked', 'Channel']).size().reset_index(name='counts')
-                            fig = px.bar(grouped, x='Booked', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
-                            st.plotly_chart(fig,use_container_width=True)
+                            ch,rt = st.tabs(['Count Booked by Channel','Count Booked by Room type'])
+                            with ch:
+                                st.markdown('**Count Booked by Channel**')
+                                grouped = filtered_df.groupby(['Booked', 'Channel']).size().reset_index(name='counts')
+                                fig = px.bar(grouped, x='Booked', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+                                st.plotly_chart(fig,use_container_width=True)
+                            with rt:
+                                st.markdown('**Count Booked by Room type**')
+                                grouped = filtered_df.groupby(['Booked', 'Room Type']).size().reset_index(name='counts')
+                                fig = px.bar(grouped, x='Booked', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
+                                st.plotly_chart(fig,use_container_width=True)
                     with t4:
                         col1, col2 = st.columns(2)
                         #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
@@ -659,16 +707,25 @@ if uploaded_files:
                         col2.plotly_chart(fig, use_container_width=True)
                         col1, col2 = st.columns(2)
                         with col1:
+                            st.markdown('**Count RN by booked**')
                             grouped = filtered_df.groupby(['Booked', 'RN']).size().reset_index(name='counts')
                             fig = px.bar(grouped, x='Booked', y='counts', color='RN',color_discrete_map=color_scale, barmode='stack')
                             st.plotly_chart(fig,use_container_width=True)
                         with col2:
-                            grouped = filtered_df.groupby(['Booked', 'Channel']).size().reset_index(name='counts')
-                            fig = px.bar(grouped, x='Booked', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
-                            st.plotly_chart(fig,use_container_width=True)
+                            ch,rt = st.tabs(['Count Booked by Channel','Count Booked by Room type'])
+                            with ch:
+                                st.markdown('**Count Booked by Channel**')
+                                grouped = filtered_df.groupby(['Booked', 'Channel']).size().reset_index(name='counts')
+                                fig = px.bar(grouped, x='Booked', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+                                st.plotly_chart(fig,use_container_width=True)
+                            with rt:
+                                st.markdown('**Count Booked by Room type**')
+                                grouped = filtered_df.groupby(['Booked', 'Room Type']).size().reset_index(name='counts')
+                                fig = px.bar(grouped, x='Booked', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
+                                st.plotly_chart(fig,use_container_width=True)
                 with LT:
                     st.markdown('**Pivot table by lead time**')
-                    t1,t2,t3,t4 = st.tabs(['ADR','LOS','RN','Portion'])
+                    t1,t2,t3,t4,t5 = st.tabs(['ADR','LOS','RN','Portion','Pie chart'])
                     with t1:
                         col1, col2 = st.columns(2)
                         #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
@@ -686,13 +743,22 @@ if uploaded_files:
                         col2.plotly_chart(fig, use_container_width=True)
                         col1, col2 = st.columns(2)
                         with col1:
+                            st.markdown('**Count ADR by LT**')
                             grouped = filtered_df.groupby(['Lead time range', 'ADR']).size().reset_index(name='counts')
                             fig = px.bar(grouped, x='Lead time range', y='counts', color='ADR',color_discrete_map=color_scale, barmode='stack')
                             st.plotly_chart(fig,use_container_width=True)
                         with col2:
-                            grouped = filtered_df.groupby(['Lead time range', 'Channel']).size().reset_index(name='counts')
-                            fig = px.bar(grouped, x='Lead time range', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
-                            st.plotly_chart(fig,use_container_width=True)
+                            ch,rt = st.tabs(['Count LT by Channel','Count LT by Room type'])
+                            with ch:
+                                st.markdown('**Count LT by Channel**')
+                                grouped = filtered_df.groupby(['Lead time range', 'Channel']).size().reset_index(name='counts')
+                                fig = px.bar(grouped, x='Lead time range', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+                                st.plotly_chart(fig,use_container_width=True)
+                            with rt:
+                                st.markdown('**Count LT by Room type**')
+                                grouped = filtered_df.groupby(['Lead time range', 'Room Type']).size().reset_index(name='counts')
+                                fig = px.bar(grouped, x='Lead time range', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
+                                st.plotly_chart(fig,use_container_width=True)
                     with t2:
                         col1, col2 = st.columns(2)
                         #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
@@ -710,13 +776,22 @@ if uploaded_files:
                         col2.plotly_chart(fig, use_container_width=True)
                         col1, col2 = st.columns(2)
                         with col1:
+                            st.markdown('**Count LOS by LT**')
                             grouped = filtered_df.groupby(['Lead time range', 'Length of stay']).size().reset_index(name='counts')
                             fig = px.bar(grouped, x='Lead time range', y='counts', color='Length of stay',color_discrete_map=color_scale, barmode='stack')
                             st.plotly_chart(fig,use_container_width=True)
                         with col2:
-                            grouped = filtered_df.groupby(['Lead time range', 'Channel']).size().reset_index(name='counts')
-                            fig = px.bar(grouped, x='Lead time range', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
-                            st.plotly_chart(fig,use_container_width=True)
+                            ch,rt = st.tabs(['Count LT by Channel','Count LT by Room type'])
+                            with ch:
+                                st.markdown('**Count LT by Channel**')
+                                grouped = filtered_df.groupby(['Lead time range', 'Channel']).size().reset_index(name='counts')
+                                fig = px.bar(grouped, x='Lead time range', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+                                st.plotly_chart(fig,use_container_width=True)
+                            with rt:
+                                st.markdown('**Count LT by Room type**')
+                                grouped = filtered_df.groupby(['Lead time range', 'Room Type']).size().reset_index(name='counts')
+                                fig = px.bar(grouped, x='Lead time range', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
+                                st.plotly_chart(fig,use_container_width=True)
                     with t3:
                         col1, col2 = st.columns(2)
                         #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
@@ -734,13 +809,22 @@ if uploaded_files:
                         col2.plotly_chart(fig, use_container_width=True)
                         col1, col2 = st.columns(2)
                         with col1:
+                            st.markdown('**Count RN by LT**')
                             grouped = filtered_df.groupby(['Lead time range', 'RN']).size().reset_index(name='counts')
                             fig = px.bar(grouped, x='Lead time range', y='counts', color='RN',color_discrete_map=color_scale, barmode='stack')
                             st.plotly_chart(fig,use_container_width=True)
                         with col2:
-                            grouped = filtered_df.groupby(['Lead time range', 'Channel']).size().reset_index(name='counts')
-                            fig = px.bar(grouped, x='Lead time range', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
-                            st.plotly_chart(fig,use_container_width=True)
+                            ch,rt = st.tabs(['Count LT by Channel','Count LT by Room type'])
+                            with ch:
+                                st.markdown('**Count LT by Channel**')
+                                grouped = filtered_df.groupby(['Lead time range', 'Channel']).size().reset_index(name='counts')
+                                fig = px.bar(grouped, x='Lead time range', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+                                st.plotly_chart(fig,use_container_width=True)
+                            with rt:
+                                st.markdown('**Count LT by Room type**')
+                                grouped = filtered_df.groupby(['Lead time range', 'Room Type']).size().reset_index(name='counts')
+                                fig = px.bar(grouped, x='Lead time range', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
+                                st.plotly_chart(fig,use_container_width=True)
                     with t4:
                         los_counts = filtered_df['Lead time range'].value_counts().reset_index()
                         custom_order = ['-one', 'zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', '8-14', '14-30', '31-90', '90-120', '120+']
@@ -775,9 +859,18 @@ if uploaded_files:
                         col1, col2 = st.columns(2)
                         col1.plotly_chart(fig,use_container_width=True)
                         col2.plotly_chart(fig1,use_container_width=True)
+                    with t5:
+                        los_counts = filtered_df['Lead time range'].value_counts().reset_index()
+                        los_counts.columns = ['Lead time range', 'Count']
+                        los_counts = los_counts.sort_values('Lead time range')
+                        fig = px.pie(los_counts, values='Count', names='Lead time range', 
+                            title='Lead time range Distribution',
+                            hole=0.4)
+                        fig.update_traces(textposition='outside', textinfo='percent+label')
+                        st.plotly_chart(fig,use_container_width=True)
                 with LOS:
                     st.markdown('**Pivot table by LOS**')
-                    t1,t2,t3,t4= st.tabs(['ADR','LT','RN','Portion'])
+                    t1,t2,t3,t4,t5= st.tabs(['ADR','LT','RN','Portion','Pie chart'])
                     with t1:
                         col1, col2 = st.columns(2)
                         #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
@@ -795,13 +888,22 @@ if uploaded_files:
                         col2.plotly_chart(fig, use_container_width=True)
                         col1, col2 = st.columns(2)
                         with col1:
+                            st.markdown('**Count ADR by LOS**')
                             grouped = filtered_df.groupby(['Length of stay', 'ADR']).size().reset_index(name='counts')
                             fig = px.bar(grouped, x='Length of stay', y='counts', color='ADR',color_discrete_map=color_scale, barmode='stack')
                             st.plotly_chart(fig,use_container_width=True)
                         with col2:
-                            grouped = filtered_df.groupby(['Length of stay', 'Channel']).size().reset_index(name='counts')
-                            fig = px.bar(grouped, x='Length of stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
-                            st.plotly_chart(fig,use_container_width=True)
+                            ch,rt = st.tabs(['Count LOS by Channel','Count LoS by Room type'])
+                            with ch:
+                                st.markdown('**Count LOS by Channel**')
+                                grouped = filtered_df.groupby(['Length of stay', 'Channel']).size().reset_index(name='counts')
+                                fig = px.bar(grouped, x='Length of stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+                                st.plotly_chart(fig,use_container_width=True)
+                            with rt:
+                                st.markdown('**Count LOS by Room type**')
+                                grouped = filtered_df.groupby(['Length of stay', 'Room Type']).size().reset_index(name='counts')
+                                fig = px.bar(grouped, x='Length of stay', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
+                                st.plotly_chart(fig,use_container_width=True)
                     with t2:
                         col1, col2 = st.columns(2)
                         #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
@@ -819,13 +921,22 @@ if uploaded_files:
                         col2.plotly_chart(fig, use_container_width=True)
                         col1, col2 = st.columns(2)
                         with col1:
+                            st.markdown('**Count LT by LOS**')
                             grouped = filtered_df.groupby(['Length of stay', 'Lead time range']).size().reset_index(name='counts')
                             fig = px.bar(grouped, x='Length of stay', y='counts', color='Lead time range',color_discrete_map=color_scale, barmode='stack')
                             st.plotly_chart(fig,use_container_width=True)
                         with col2:
-                            grouped = filtered_df.groupby(['Length of stay', 'Channel']).size().reset_index(name='counts')
-                            fig = px.bar(grouped, x='Length of stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
-                            st.plotly_chart(fig,use_container_width=True)
+                            ch,rt = st.tabs(['Count LOS by Channel','Count LoS by Room type'])
+                            with ch:
+                                st.markdown('**Count LOS by Channel**')
+                                grouped = filtered_df.groupby(['Length of stay', 'Channel']).size().reset_index(name='counts')
+                                fig = px.bar(grouped, x='Length of stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+                                st.plotly_chart(fig,use_container_width=True)
+                            with rt:
+                                st.markdown('**Count LOS by Room type**')
+                                grouped = filtered_df.groupby(['Length of stay', 'Room Type']).size().reset_index(name='counts')
+                                fig = px.bar(grouped, x='Length of stay', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
+                                st.plotly_chart(fig,use_container_width=True)
                     with t3:
                         col1, col2 = st.columns(2)
                         #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
@@ -843,13 +954,22 @@ if uploaded_files:
                         col2.plotly_chart(fig, use_container_width=True)
                         col1, col2 = st.columns(2)
                         with col1:
+                            st.markdown('**Count RN by LOS**')
                             grouped = filtered_df.groupby(['Length of stay', 'RN']).size().reset_index(name='counts')
                             fig = px.bar(grouped, x='Length of stay', y='counts', color='RN',color_discrete_map=color_scale, barmode='stack')
                             st.plotly_chart(fig,use_container_width=True)
                         with col2:
-                            grouped = filtered_df.groupby(['Length of stay', 'Channel']).size().reset_index(name='counts')
-                            fig = px.bar(grouped, x='Length of stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
-                            st.plotly_chart(fig,use_container_width=True)
+                            ch,rt = st.tabs(['Count LOS by Channel','Count LoS by Room type'])
+                            with ch:
+                                st.markdown('**Count LOS by Channel**')
+                                grouped = filtered_df.groupby(['Length of stay', 'Channel']).size().reset_index(name='counts')
+                                fig = px.bar(grouped, x='Length of stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+                                st.plotly_chart(fig,use_container_width=True)
+                            with rt:
+                                st.markdown('**Count LOS by Room type**')
+                                grouped = filtered_df.groupby(['Length of stay', 'Room Type']).size().reset_index(name='counts')
+                                fig = px.bar(grouped, x='Length of stay', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
+                                st.plotly_chart(fig,use_container_width=True)
                     with t4:
                         los_counts1 = filtered_df['LOS range'].value_counts().reset_index()
                         custom_order1 = ['one', 'two', 'three', 'four', 'five', 'six','seven','eight', 'nine', 'ten', '14-30', '30-45', '60+']
@@ -883,6 +1003,15 @@ if uploaded_files:
                         col1, col2 = st.columns(2)
                         col1.plotly_chart(fig,use_container_width=True)
                         col2.plotly_chart(fig1,use_container_width=True)
+                    with t5:
+                        los_counts = filtered_df['Length of stay'].value_counts().reset_index()
+                        los_counts.columns = ['Length of stay', 'Count']
+                        los_counts = los_counts.sort_values('Length of stay')
+                        fig = px.pie(los_counts, values='Count', names='Length of stay', 
+                            title='Length of Stay Distribution',
+                            hole=0.4)
+                        fig.update_traces(textposition='outside', textinfo='percent+label')
+                        st.plotly_chart(fig,use_container_width=True)
                     
             with tab_stay:
                 all3 =  perform(all)
@@ -1046,7 +1175,7 @@ if uploaded_files:
                     st.write(result,use_container_width=True)
 
                 st.markdown('**You can zoom in**')
-                col1, col2 = st.columns(2)
+
                 channels = filtered_df['Channel'].unique()
                 num_colors = len(channels)
                 existing_colors = ['#636EFA', '#EF553B', '#00CC96', '#AB63FA', '#FFA15A', '#19D3F3', '#FF6692', '#B6E880', '#FF97FF', '#6392FF']
@@ -1054,14 +1183,43 @@ if uploaded_files:
                 combined_colors = existing_colors + additional_colors
                 colors = combined_colors
                 color_scale =  {channel: colors[i % num_colors] for i, channel in enumerate(channels)}
-                with col1:
+
+                ch,rt = st.tabs(['Count Stay by Channel','Count Stay by Room type'])
+                with ch:
+                    st.markdown('**Count Stay by Channel**')
                     grouped = filtered_df.groupby(['Stay', 'Channel']).size().reset_index(name='counts')
                     fig = px.bar(grouped, x='Stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
                     st.plotly_chart(fig,use_container_width=True)
-                with col2:
-                    grouped = filtered_df.groupby(['Lead time range', 'Channel']).size().reset_index(name='counts')
-                    fig = px.bar(grouped, x='Lead time range', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+                with rt:
+                    st.markdown('**Count Stay by Room type**')
+                    grouped = filtered_df.groupby(['Stay', 'Room Type']).size().reset_index(name='counts')
+                    fig = px.bar(grouped, x='Stay', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
                     st.plotly_chart(fig,use_container_width=True)
+                col1, col2 = st.columns(2)
+                with col1:
+                    ch,rt = st.tabs(['Count LOS by Channel','Count LOS by Room type'])
+                    with ch:
+                        st.markdown('**Count LOS by Channel**')
+                        grouped = filtered_df.groupby(['Length of stay', 'Channel']).size().reset_index(name='counts')
+                        fig = px.bar(grouped, x='Length of stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+                        st.plotly_chart(fig,use_container_width=True)
+                    with rt:
+                        st.markdown('**Count LOS by Room type**')
+                        grouped = filtered_df.groupby(['Length of stay', 'Room Type']).size().reset_index(name='counts')
+                        fig = px.bar(grouped, x='Length of stay', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
+                        st.plotly_chart(fig,use_container_width=True)
+                with col2:
+                    ch,rt = st.tabs(['Count LT by Channel','Count LT by Room type'])
+                    with ch:
+                        st.markdown('**Count LT by Channel**')
+                        grouped = filtered_df.groupby(['Lead time range', 'Channel']).size().reset_index(name='counts')
+                        fig = px.bar(grouped, x='Lead time range', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+                        st.plotly_chart(fig,use_container_width=True)
+                    with rt:
+                        st.markdown('**Count LT by Room type**')
+                        grouped = filtered_df.groupby(['Lead time range', 'Room Type']).size().reset_index(name='counts')
+                        fig = px.bar(grouped, x='Lead time range', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
+                        st.plotly_chart(fig,use_container_width=True)
 
                 col1, col2 = st.columns(2)
                 with col1:
@@ -1103,13 +1261,22 @@ if uploaded_files:
                     col2.plotly_chart(fig, use_container_width=True)
                     col1, col2 = st.columns(2)
                     with col1:
+                        st.markdown('**Count ADR by Stay**')
                         grouped = filtered_df.groupby(['Stay', 'ADR']).size().reset_index(name='counts')
                         fig = px.bar(grouped, x='Stay', y='counts', color='ADR',color_discrete_map=color_scale, barmode='stack')
                         st.plotly_chart(fig,use_container_width=True)
                     with col2:
-                        grouped = filtered_df.groupby(['Stay', 'Channel']).size().reset_index(name='counts')
-                        fig = px.bar(grouped, x='Stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
-                        st.plotly_chart(fig,use_container_width=True)
+                        ch,rt = st.tabs(['Count Stay by Channel','Count Stay by Room type'])
+                        with ch:
+                            st.markdown('**Count Stay by Channel**')
+                            grouped = filtered_df.groupby(['Stay', 'Channel']).size().reset_index(name='counts')
+                            fig = px.bar(grouped, x='Stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+                            st.plotly_chart(fig,use_container_width=True)
+                        with rt:
+                            st.markdown('**Count Stay by Room type**')
+                            grouped = filtered_df.groupby(['Stay', 'Room Type']).size().reset_index(name='counts')
+                            fig = px.bar(grouped, x='Stay', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
+                            st.plotly_chart(fig,use_container_width=True)
 
                 with t2:
                     col1, col2 = st.columns(2)
@@ -1128,14 +1295,23 @@ if uploaded_files:
                     col2.plotly_chart(fig, use_container_width=True)
                     col1, col2 = st.columns(2)
                     with col1:
+                        st.markdown('**Count LT by Stay**')
                         grouped = filtered_df.groupby(['Stay', 'Lead time range']).size().reset_index(name='counts')            
                         fig = px.bar(grouped, x='Stay', y='counts', color='Lead time range',color_discrete_map=color_scale, barmode='stack')
                         st.plotly_chart(fig,use_container_width=True)
                         
                     with col2:
-                        grouped = filtered_df.groupby(['Stay', 'Channel']).size().reset_index(name='counts')
-                        fig = px.bar(grouped, x='Stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
-                        st.plotly_chart(fig,use_container_width=True)
+                        ch,rt = st.tabs(['Count Stay by Channel','Count Stay by Room type'])
+                        with ch:
+                            st.markdown('**Count Stay by Channel**')
+                            grouped = filtered_df.groupby(['Stay', 'Channel']).size().reset_index(name='counts')
+                            fig = px.bar(grouped, x='Stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+                            st.plotly_chart(fig,use_container_width=True)
+                        with rt:
+                            st.markdown('**Count Stay by Room type**')
+                            grouped = filtered_df.groupby(['Stay', 'Room Type']).size().reset_index(name='counts')
+                            fig = px.bar(grouped, x='Stay', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
+                            st.plotly_chart(fig,use_container_width=True)
                 with t3:
                     col1, col2 = st.columns(2)
                     #filtered_df_pi = pd.pivot_table(filtered_df, index='Stay',values=['ADR'])
@@ -1153,13 +1329,22 @@ if uploaded_files:
                     col2.plotly_chart(fig, use_container_width=True)
                     col1, col2 = st.columns(2)
                     with col1:
+                        st.markdown('**Count LOS by Stay**')
                         grouped = filtered_df.groupby(['Stay', 'Length of stay']).size().reset_index(name='counts')
                         fig = px.bar(grouped, x='Stay', y='counts', color='Length of stay',color_discrete_map=color_scale, barmode='stack')
                         st.plotly_chart(fig,use_container_width=True)
                     with col2:
-                        grouped = filtered_df.groupby(['Stay', 'Channel']).size().reset_index(name='counts')
-                        fig = px.bar(grouped, x='Stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
-                        st.plotly_chart(fig,use_container_width=True)
+                        ch,rt = st.tabs(['Count Stay by Channel','Count Stay by Room type'])
+                        with ch:
+                            st.markdown('**Count Stay by Channel**')
+                            grouped = filtered_df.groupby(['Stay', 'Channel']).size().reset_index(name='counts')
+                            fig = px.bar(grouped, x='Stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+                            st.plotly_chart(fig,use_container_width=True)
+                        with rt:
+                            st.markdown('**Count Stay by Room type**')
+                            grouped = filtered_df.groupby(['Stay', 'Room Type']).size().reset_index(name='counts')
+                            fig = px.bar(grouped, x='Stay', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
+                            st.plotly_chart(fig,use_container_width=True)
                 with t4:
                     col1, col2 = st.columns(2)
                     #filtered_df_pi = pd.pivot_table(filtered_df, index='Stay',values=['ADR'])
@@ -1177,13 +1362,22 @@ if uploaded_files:
                     col2.plotly_chart(fig, use_container_width=True)
                     col1, col2 = st.columns(2)
                     with col1:
+                        st.markdown('**Count RN by Stay**')
                         grouped = filtered_df.groupby(['Stay', 'RN']).size().reset_index(name='counts')
                         fig = px.bar(grouped, x='Stay', y='counts', color='RN',color_discrete_map=color_scale, barmode='stack')
                         st.plotly_chart(fig,use_container_width=True)
                     with col2:
-                        grouped = filtered_df.groupby(['Stay', 'Channel']).size().reset_index(name='counts')
-                        fig = px.bar(grouped, x='Stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
-                        st.plotly_chart(fig,use_container_width=True)
+                        ch,rt = st.tabs(['Count Stay by Channel','Count Stay by Room type'])
+                        with ch:
+                            st.markdown('**Count Stay by Channel**')
+                            grouped = filtered_df.groupby(['Stay', 'Channel']).size().reset_index(name='counts')
+                            fig = px.bar(grouped, x='Stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+                            st.plotly_chart(fig,use_container_width=True)
+                        with rt:
+                            st.markdown('**Count Stay by Room type**')
+                            grouped = filtered_df.groupby(['Stay', 'Room Type']).size().reset_index(name='counts')
+                            fig = px.bar(grouped, x='Stay', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
+                            st.plotly_chart(fig,use_container_width=True)
         except Exception as e:
             st.write(f"Error reading file: {uploaded_file.name}")
             st.write(e)
