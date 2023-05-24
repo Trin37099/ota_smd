@@ -873,15 +873,16 @@ if uploaded_files:
                 all3 =  perform(all)
                 if selected_channels:
                     filtered_df = all3[all3['Channel'].isin(selected_channels)]
+                    if selected_room_types:
+                        if 'All' not in selected_room_types:
+                            filtered_df = filtered_df[filtered_df['Room Type'].isin(selected_room_types)]
+                    else:
                         if selected_room_types:
                             if 'All' not in selected_room_types:
-                                filtered_df = filtered_df[filtered_df['Room Type'].isin(selected_room_types)]
-                        else:
-                            if selected_room_types:
-                                if 'All' not in selected_room_types:
-                                    filtered_df = all3[all3['Room Type'].isin(selected_room_types)]
+                                filtered_df = all3[all3['Room Type'].isin(selected_room_types)]
                 else:
-                        filtered_df = all3
+                    filtered_df = all3
+
                 filtered_df['Stay'] = filtered_df.apply(lambda row: pd.date_range(row['Check-in'], row['Check-out']- pd.Timedelta(days=1)), axis=1)
                 filtered_df = filtered_df.explode('Stay').reset_index(drop=True)
                 filtered_df = filtered_df[['Stay','Check-in','Guest names','Channel','ADR','Length of stay','Lead time','Lead time range','RN','Quantity','Room Type']]
