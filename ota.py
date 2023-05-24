@@ -726,40 +726,40 @@ if uploaded_files:
                         fig = px.bar(grouped, x='Lead time range', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
                         st.plotly_chart(fig,use_container_width=True)
                 with t4:
-                    los_counts = filtered_df['Lead time range'].value_counts().reset_index()
-                    custom_order = ['-one', 'zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', '8-14', '14-30', '31-90', '90-120', '120+']
-                    los_counts['sorting_order'] = pd.Categorical(los_counts['count'], categories=custom_order, ordered=True)
-                    df_sorted = los_counts.sort_values('sorting_order')
-                    df_sorted = df_sorted.drop('sorting_order', axis=1).reset_index(drop=True)
-                    total_count = df_sorted['Lead time range'].sum()
-                    total_count1 = los_counts['Lead time range'].sum()
-                    los_counts['Percentage'] = (los_counts['Lead time range'] / total_count1) * 100
-                    df_sorted['Percentage'] = (df_sorted['Lead time range'] / total_count1) * 100
-                    los_counts = los_counts[['count','Percentage']]
-                    color_mapping = {
-                                    '-one': '#99f3bd',
-                                    'zero': '#fbaccc',
-                                    'one': '#a8df65',
-                                    'two': '#ff7b54',
-                                    'three': '#FFC300',
-                                    'four': '#7FB3D5',
-                                    'five': '#C70039',
-                                    'six': '#900C3F',
-                                    'seven': '#581845',
-                                    '8-14': '#9C640C',
-                                    '14-30': '#154360',
-                                    '31-90': '#512E5F',
-                                    '90-120': '#424949',
-                                    '120+': '#FF5733'
-                                }
-                    fig = px.bar(df_sorted, x='count', y='Pertcentage', title='Lead Time Range Distribution',text_auto=True,color='count',color_discrete_map=color_mapping)
-                    fig1 = px.bar(los_counts, x='count', y='Percentage', title='Lead Time Range Distribution (Sorted)',text_auto=True,color='count',color_discrete_map=color_mapping)
-                    fig.update_layout(xaxis_title='Lead Time Range', yaxis_title='Percentage')
-                    fig1.update_layout(xaxis_title='Lead Time Range', yaxis_title='Percentage')
-                    col1, col2 = st.columns(2)
-                    col1.plotly_chart(fig,use_container_width=True)
-                    col2.plotly_chart(fig1,use_container_width=True)
-
+                        los_counts = filtered_df['Lead time range'].value_counts().reset_index()
+                        custom_order = ['-one', 'zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', '8-14', '14-30', '31-90', '90-120', '120+']
+                        los_counts['sorting_order'] = pd.Categorical(los_counts['Lead time range'], categories=custom_order, ordered=True)
+                        df_sorted = los_counts.sort_values('sorting_order')
+                        df_sorted = df_sorted.drop('sorting_order', axis=1).reset_index(drop=True)
+                        total_count = df_sorted['count'].sum()
+                        total_count1 = los_counts['count'].sum()
+                        los_counts['Percentage'] = (los_counts['count'] / total_count1) * 100
+                        df_sorted['Percentage'] = (df_sorted['count'] / total_count1) * 100
+                        los_counts = los_counts[['Lead time range','Percentage']]
+                        color_mapping = {
+                                        '-one': '#99f3bd',
+                                        'zero': '#fbaccc',
+                                        'one': '#a8df65',
+                                        'two': '#ff7b54',
+                                        'three': '#FFC300',
+                                        'four': '#7FB3D5',
+                                        'five': '#C70039',
+                                        'six': '#900C3F',
+                                        'seven': '#581845',
+                                        '8-14': '#9C640C',
+                                        '14-30': '#154360',
+                                        '31-90': '#512E5F',
+                                        '90-120': '#424949',
+                                        '120+': '#FF5733'
+                                    }
+                        fig = px.bar(df_sorted, x='Lead time range', y='Percentage', title='Lead Time Range Distribution',text_auto=True,color='Lead time range',color_discrete_map=color_mapping)
+                        fig1 = px.bar(los_counts, x='Lead time range', y='Percentage', title='Lead Time Range Distribution (Sorted)',text_auto=True,color='Lead time range',color_discrete_map=color_mapping)
+                        fig.update_layout(xaxis_title='Lead Time Range', yaxis_title='Percentage')
+                        fig1.update_layout(xaxis_title='Lead Time Range', yaxis_title='Percentage')
+                        col1, col2 = st.columns(2)
+                        col1.plotly_chart(fig,use_container_width=True)
+                        col2.plotly_chart(fig1,use_container_width=True)
+        
                 st.markdown('**Pivot table by LOS**')
                 t1,t2,t3,t4= st.tabs(['ADR','LT','RN','Pie chart'])
                 with t1:
