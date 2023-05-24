@@ -728,14 +728,14 @@ if uploaded_files:
                 with t4:
                     los_counts = filtered_df['Lead time range'].value_counts().reset_index()
                     custom_order = ['-one', 'zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', '8-14', '14-30', '31-90', '90-120', '120+']
-                    los_counts['sorting_order'] = pd.Categorical(los_counts['index'], categories=custom_order, ordered=True)
+                    los_counts['sorting_order'] = pd.Categorical(los_counts['count'], categories=custom_order, ordered=True)
                     df_sorted = los_counts.sort_values('sorting_order')
                     df_sorted = df_sorted.drop('sorting_order', axis=1).reset_index(drop=True)
                     total_count = df_sorted['Lead time range'].sum()
                     total_count1 = los_counts['Lead time range'].sum()
                     los_counts['Percentage'] = (los_counts['Lead time range'] / total_count1) * 100
                     df_sorted['Percentage'] = (df_sorted['Lead time range'] / total_count1) * 100
-                    los_counts = los_counts[['index','Percentage']]
+                    los_counts = los_counts[['count','Percentage']]
                     color_mapping = {
                                     '-one': '#99f3bd',
                                     'zero': '#fbaccc',
