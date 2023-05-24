@@ -215,8 +215,10 @@ elif hotel_select == "AMBER 85":
             return row['ADR']
 elif hotel_select == 'ARBOUR':
     def convert_room_type(room_type):
-        if re.search(r'\bDELUXE KING ROOM\b|\bDELUXE KING\b|\bDELUXE CITY VIEW KING\b|\bROOM DELUXE KING BED\b|\bDELUXE  KING ROOM\b|\bDELUXE KING ROOM ONLY\b|\bห้องดีลักซ์เตียงคิงไซส์\b', room_type):
+        if re.search(r'\bDELUXE KING ROOM\b|\bDELUXE KING\b|\bDELUXE CITY VIEW KING\b|\bROOM DELUXE KING BED\b|\bDELUXE  KING ROOM\b|\bDELUXE KING ROOM ONLY\b|\bห้องดีลักซ์เตียงคิงไซส์\b|ห้องดีลักซ์เตียงคิงไซส์', room_type):
             return 'DELUXE KING'
+        elif re.search(r'ห้องพรีเมียร์เตียงใหญ่ชั้นสูงพร้อมวิวเมือง|\bPREMIER HIGH FLOOR CITY VIEW\b|\bPREMIER DOUBLE ROOM HIGH FLOOR  WITH CITY VIEW\b|\bROOM PREMIER CITY VIEW\b',room_type):
+            return 'PREMIER HIGH FLOOR'
         elif re.search(r'\bDELUXE CITY VIEW\b|\bDELUXE DOUBLE ROOM, CITY VIEW\b|\bROOM DELUXE CITY VIEW DOUBLE ROOM\b|\bDELUXE CITY VIEW\b|\bDELUXE DOUBLE ROOM WITH CITY VIEW\b|\bDELUXE CITY VIEW ROOM ONLY\b|\bห้องดีลักซ์เตียงใหญ่พร้อมวิวเมือง\b', room_type):
             return 'DELUXE CITY VIEW'
         elif re.search(r'\bDELUXE OCEAN VIEW\b|\bDELUXE DOUBLE ROOM WITH OCEAN VIEW\b|\bROOM DELUXE OCEAN VIEW\b|\bDELUXE DOUBLE ROOM, OCEAN VIEW\b|\bDELUXE OCEAN VIEW KING\b|\bDELUXE OCEAN VIEW ROOM ONLY\b|\bห้องดีลักซ์เตียงใหญ่พร้อมวิวมหาสมุทร\b', room_type):
@@ -225,19 +227,19 @@ elif hotel_select == 'ARBOUR':
             return 'DELUXE DOUBLE OR TWIN'
         elif re.search(r'\bDELUXE CITY VIEW\b|\bDELUXE DOUBLE ROOM, CITY VIEW\b|\bROOM DELUXE CITY VIEW DOUBLE ROOM\b|\bDELUXE CITY VIEW\b|\bDELUXE DOUBLE ROOM WITH CITY VIEW\b|\bDELUXE CITY VIEW ROOM ONLY\b|\bห้องดีลักซ์เตียงใหญ่พร้อมวิวเมือง\b', room_type):
             return 'DELUXE CITY VIEW'
-        elif re.search(r'\bPREMIER KING\b|\bPREMIER KING\b|\bPREMIER CITY VIEW KING\b|\bPREMIER CITY VIEW ROOM ONLY\b', room_type):
+        elif re.search(r'\bPREMIER CITY VIEW\b|\bPREMIER CITY VIEW\b|PREMIER CITY VIEW KING|\bPREMIER DOUBLE ROOM, CITY VIEW\b|\bPREMIER DOUBLE ROOM WITH CITY VIEW\b|\bPREMIER CITY VIEW\b|\bPREMIER CITY VIEW ROOM ONLY\b|ห้องพรีเมียร์เตียงใหญ่พร้อมวิวเมือง', room_type):
+            return 'PREMIER CITY VIEW'
+        elif re.search(r'\bPREMIER KING\b|PREMIER DOUBLE ROOM|ห้องพรีเมียร์เตียงใหญ่|\bPREMIER KING\b|\bPREMIER CITY VIEW KING\b|\bPREMIER CITY VIEW ROOM ONLY\b|PREMIER DOUBLE BED', room_type):
             return 'PREMIER KING'
         elif re.search(r'\bDELUXE OCEAN VIEW\b|\bDELUXE DOUBLE ROOM WITH OCEAN VIEW\b|\bROOM DELUXE OCEAN VIEW\b|\bDELUXE DOUBLE ROOM, OCEAN VIEW\b|\bDELUXE OCEAN VIEW KING\b|\bDELUXE OCEAN VIEW ROOM ONLY\b|\bห้องดีลักซ์เตียงใหญ่พร้อมวิวมหาสมุทร\b', room_type):
             return 'DELUXE OCEAN VIEW'
-        elif re.search(r'\bPREMIER CITY VIEW\b|\bPREMIER CITY VIEW\b|\bPREMIER HIGH FLOOR CITY VIEW\b|\bPREMIER DOUBLE ROOM, CITY VIEW\b|\bPREMIER DOUBLE ROOM HIGH FLOOR  WITH CITY VIEW\b|\bROOM PREMIER CITY VIEW\b|\bPREMIER DOUBLE ROOM WITH CITY VIEW\b|\bPREMIER CITY VIEW\b|\bPREMIER CITY VIEW ROOM ONLY\b|\bTWO BEDROOM SUITE OCEAN VIEW ROOM ONLY\b|\bห้องพรีเมียร์เตียงใหญ่พร้อมวิวเมือง\b', room_type):
-            return 'PREMIER CITY VIEW'
-        elif re.search(r'\bPREMIER HIGH FLOOR\b|\bPREMIER DOUBLE ROOM\b|\bROOM PREMIER\b|\bPREMIER DOUBLE BED\b|\bPREMIER HIGH FLOOR ROOM WITH VIEW\b|\bPREMIER ROOM\b|\bPREMIER HIGH FLOOR CITY VIEW ROOM ONLY\b|\bPREMIER ROOM ONLY\b|\bPREMIER HIGH FLOOR CITY VIEW ROOM ONLY\b|\bROOM PREMIER HIGH FLOOR\b|\bห้องพรีเมียร์เตียงใหญ่ชั้นสูงพร้อมวิวเมือง\b|\bห้องพรีเมียร์เตียงใหญ่\b', room_type):
+        elif re.search(r'\bPREMIER HIGH FLOOR\b|\bROOM PREMIER\b|\bPREMIER HIGH FLOOR ROOM WITH VIEW\b|\bPREMIER ROOM\b|\bPREMIER HIGH FLOOR CITY VIEW ROOM ONLY\b|\bPREMIER ROOM ONLY\b|\bPREMIER HIGH FLOOR CITY VIEW ROOM ONLY\b|\bROOM PREMIER HIGH FLOOR\b|ห้องพรีเมียร์เตียงใหญ่ชั้นสูงพร้อมวิวเมือง|\bห้องพรีเมียร์เตียงใหญ่ชั้นสูงพร้อมวิวเมือง\b', room_type):
             return 'PREMIER HIGH FLOOR'
-        elif re.search(r'\bTWO BEDROOM SUITES\b|\bTWO\b|\bTWO BEDROOM SUITE\b|\bTWO BEDROOM SUITES\b|\bFAMILY SUITE, 2 BEDROOMS\b|\bTWO BEDROOM SUITE OCEAN VIEW\b|\bSUITE TWO BEDROOM SUITES\b|\bห้องสวีทแบบสองห้องนอนพร้อมวิวทะเล\b|TWO', room_type):
+        elif re.search(r'\bTWO BEDROOM SUITES\b|\bTWO\b|\bTWO BEDROOM SUITE\b|\bTWO BEDROOM SUITES\b|\bFAMILY SUITE, 2 BEDROOMS\b|\bTWO BEDROOM SUITE OCEAN VIEW\b|\bSUITE TWO BEDROOM SUITES\b|\bห้องสวีทแบบสองห้องนอนพร้อมวิวทะเล\b|TWO|\bTWO BEDROOM SUITE OCEAN VIEW ROOM ONLY\b', room_type):
             return 'TWO BEDROOM SUITE'
-        elif re.search(r'\bPENTHOUSE SUITE WITH PRIVATE POOL\b|\bPENTHOUSE SUITE WITH PRIVATE POOL\b|\bSUITE PENTHOUSE SUITE WITH PRIVATE POOL\b', room_type):
+        elif re.search(r'\bPENTHOUSE SUITE WITH PRIVATE POOL\b|เพนต์เฮาส์สวีทพร้อมสระว่ายน้ำส่วนตัว|\bPENTHOUSE SUITE WITH PRIVATE POOL\b|\bSUITE PENTHOUSE SUITE WITH PRIVATE POOL\b', room_type):
             return 'PENTHOUSE SUITE'
-        elif re.search(r'\bHONEYMOON SUITE WITH OCEAN VIEW\b|\bHONEYMOON SUITE WITH OCEAN VIEW\b|\bHONEYMOON SUITES\b', room_type):
+        elif re.search(r'\bHONEYMOON SUITE WITH OCEAN VIEW\b|\bHONEYMOON SUITE WITH OCEAN VIEW\b|\bHONEYMOON SUITES\b|ห้องฮันนีมูนสวีทพร้อมวิวมหาสมุทร', room_type):
             return 'HONEYMOON SUITE'
         elif re.search(r'\bMIXED ROOM\b', room_type):
             return 'MIXED'
@@ -998,14 +1000,90 @@ with col1:
     else:
         filtered_df = filtered_df.copy()
 
+tab1, tab2, tab3 ,tab4, tab5 , tab6 ,tab7,tab8,tab9= st.tabs(["Average", "Median", "Statistic",'Data'
+                                                    ,'Bar Chart','Room roomnight by channel'
+                                                    ,'Room revenue by channel','Flexible/NRF','RO/ABF'])
+with tab1:
+    col0, col1, col2, col4 = st.columns(4)
+    filtered_df['ADR discount'] = filtered_df["ADR"]*filtered_df["Length of stay"]*filtered_df["Quantity"]
+    col0.metric('**Revenue**',f'{round(filtered_df["ADR discount"].sum(),4)}')
+    col4.metric('**ADR with discount commission and ABF**',f'{round(filtered_df["ADR"].mean(),4)}',)
+    col1.metric("**A.LT**", f'{round(filtered_df["Lead time"].mean(),4)}')
+    col2.metric("**A.LOS**", f'{round(filtered_df["Length of stay"].mean(),4)}')
+with tab2:
+    col1, col2, col3 = st.columns(3)
+    col3.metric('ADR with discount commission',f'{round(filtered_df["ADR"].median(),4)}')
+    col1.metric("A.LT", f'{round(filtered_df["Lead time"].median(),4)}')
+    col2.metric("A.LOS", f'{round(filtered_df["Length of stay"].median(),4)}')
+with tab3:
+    st.write(filtered_df.describe())
+with tab4:
+    st.write(filtered_df)
+with tab5:
+    tab11, tab12, tab13, tab14 = st.tabs(['A.LT','A.LOS','A.RN','ADR by month'])
+    with tab14:
+        month_order = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+        mean_adr_by_month = filtered_df.groupby(['Room Type', filtered_df['Stay'].dt.month_name()])['ADR'].mean().reset_index()
+        mean_adr_by_month['Stay'] = pd.Categorical(mean_adr_by_month['Stay'], categories=month_order)
+
+        bar_chart = px.bar(mean_adr_by_month, x='Stay', y='ADR', color='Room Type',category_orders={'Stay': month_order},
+                    text='ADR')
+        bar_chart.update_traces(texttemplate='%{text:.2f}', textposition='auto')
+        st.plotly_chart(bar_chart, use_container_width=True)
+    with tab11:
+        month_order = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+        mean_adr_by_month = filtered_df.groupby(['Room Type', filtered_df['Stay'].dt.month_name()])['Lead time'].mean().reset_index()
+        mean_adr_by_month['Stay'] = pd.Categorical(mean_adr_by_month['Stay'], categories=month_order)
+
+        bar_chart = px.bar(mean_adr_by_month, x='Stay', y='Lead time', color='Room Type',category_orders={'Stay': month_order},
+                    text='Lead time')
+        bar_chart.update_traces(texttemplate='%{text:.2f}', textposition='auto')
+        st.plotly_chart(bar_chart, use_container_width=True)
+    with tab12:
+        month_order = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+        mean_adr_by_month = filtered_df.groupby(['Room Type', filtered_df['Stay'].dt.month_name()])['Length of stay'].mean().reset_index()
+        mean_adr_by_month['Stay'] = pd.Categorical(mean_adr_by_month['Stay'], categories=month_order)
+
+        bar_chart = px.bar(mean_adr_by_month, x='Stay', y='Length of stay', color='Room Type',category_orders={'Stay': month_order},
+                text='Length of stay')
+        bar_chart.update_traces(texttemplate='%{text:.2f}', textposition='auto')
+        st.plotly_chart(bar_chart, use_container_width=True)
+    with tab13:
+        month_order = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+        mean_adr_by_month = filtered_df.groupby(['Room Type', filtered_df['Stay'].dt.month_name()])['RN'].mean().reset_index()
+        mean_adr_by_month['Stay'] = pd.Categorical(mean_adr_by_month['Stay'], categories=month_order)
+
+        bar_chart = px.bar(mean_adr_by_month, x='Stay', y='RN', color='Room Type',category_orders={'Stay': month_order},
+                    text='RN')
+        bar_chart.update_traces(texttemplate='%{text:.2f}', textposition='auto')
+        st.plotly_chart(bar_chart, use_container_width=True)
+with tab6:
+    counts = filtered_df[['Channel', 'Room Type','RN']].groupby(['Channel', 'Room Type']).sum().reset_index()
+    fig = px.treemap(counts, path=['Channel', 'Room Type','RN'], values='RN', color='RN',color_continuous_scale='YlOrRd')
+    st.plotly_chart(fig, use_container_width=True)
+with tab7:
+    counts = filtered_df[['Channel', 'Room Type','ADR discount']].groupby(['Channel', 'Room Type']).sum().reset_index()
+    fig = px.treemap(counts, path=['Channel', 'Room Type','ADR discount'], values='ADR discount', color='ADR discount',color_continuous_scale='YlOrRd')
+    st.plotly_chart(fig, use_container_width=True)
+with tab8:
+    counts = all2[['Channel','F/NRF']].groupby(['Channel', 'F/NRF']).size().reset_index(name='Count')
+    total_count = counts['Count'].sum()
+    fig = px.treemap(counts, path=['Channel', 'F/NRF'], values='Count', color='Count',color_continuous_scale='YlOrRd')
+    st.plotly_chart(fig, use_container_width=True)
+with tab9:
+    counts = all2[['Channel','RO/ABF']].groupby(['Channel', 'RO/ABF']).size().reset_index(name='Count')
+    total_count = counts['Count'].sum()
+    fig = px.treemap(counts, path=['Channel', 'RO/ABF'], values='Count', color='Count',color_continuous_scale='YlOrRd')
+    st.plotly_chart(fig, use_container_width=True)
+
+
 st.markdown('**avg ADR without comm and ABF by channal and room type (if you do not filter month, it would be all month)**')
 df_january = filtered_df[['Stay','Channel','Room Type','ADR']]
 avg_adr = df_january.groupby(['Channel', 'Room Type'])['ADR'].mean()
 result = avg_adr.reset_index().pivot_table(values='ADR', index='Channel', columns='Room Type', fill_value='none')
-col1, col2, col3 = st.columns(3)
 result = result.applymap(lambda x: '{:.2f}'.format(x) if x != 'none' else 'none')
-col2.write(result,use_container_width=True)
- 
+st.write(result,use_container_width=True)
+
 st.markdown('**You can zoom in**')
 col1, col2 = st.columns(2)
 channels = filtered_df['Channel'].unique()
@@ -1023,7 +1101,6 @@ with col2:
     grouped = filtered_df.groupby(['Lead time range', 'Channel']).size().reset_index(name='counts')
     fig = px.bar(grouped, x='Lead time range', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
     st.plotly_chart(fig,use_container_width=True)
-
 
 col1, col2 = st.columns(2)
 with col1:
@@ -1045,19 +1122,19 @@ with col2:
         st.write(pt.style.format("{:.2f}").background_gradient(cmap='coolwarm', axis=1))
     else:
         st.write('Not enough data to create a pivot table')
-       
+
 st.markdown('**Pivot table by Stay**')
 t1,t2,t3,t4 = st.tabs(['ADR','LT','LOS','RN'])
 with t1:
     col1, col2 = st.columns(2)
-    #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
+    #filtered_df_pi = pd.pivot_table(filtered_df, index='Stay',values=['ADR'])
     col1.markdown('Average ADR by Stay and Room Type')
     #st.bar_chart(filtered_df_pi)
     adr_avg = filtered_df.groupby(['Stay', 'Room Type'])['ADR'].mean().reset_index()
     fig = px.bar(adr_avg, x='Stay', y='ADR', color='Room Type',text_auto=True)
     fig.update_layout(legend=dict(orientation="h",yanchor="bottom",y=1.02,xanchor="right",x=1))
     col1.plotly_chart(fig, use_container_width=True)
-    #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
+    #filtered_df_pi = pd.pivot_table(filtered_df, index='Stay',values=['ADR'])
     col2.markdown('Average ADR by Stay')
     #st.bar_chart(filtered_df_pi)
     adr_avg = filtered_df.groupby(['Stay'])['ADR'].mean().reset_index()
@@ -1075,14 +1152,14 @@ with t1:
 
 with t2:
     col1, col2 = st.columns(2)
-    #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
+    #filtered_df_pi = pd.pivot_table(filtered_df, index='Stay',values=['ADR'])
     col1.markdown('Average LT by Stay and Room Type')
     #st.bar_chart(filtered_df_pi)
     adr_avg = filtered_df.groupby(['Stay', 'Room Type'])['Lead time'].mean().reset_index()
     fig = px.bar(adr_avg, x='Stay', y='Lead time', color='Room Type',text_auto=True)
     fig.update_layout(legend=dict(orientation="h",yanchor="bottom",y=1.02,xanchor="right",x=1))
     col1.plotly_chart(fig, use_container_width=True)
-    #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
+    #filtered_df_pi = pd.pivot_table(filtered_df, index='Stay',values=['ADR'])
     col2.markdown('Average LT by Stay')
     #st.bar_chart(filtered_df_pi)        
     adr_avg = filtered_df.groupby(['Stay'])['Lead time'].mean().reset_index()
@@ -1100,14 +1177,14 @@ with t2:
         st.plotly_chart(fig,use_container_width=True)
 with t3:
     col1, col2 = st.columns(2)
-    #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
+    #filtered_df_pi = pd.pivot_table(filtered_df, index='Stay',values=['ADR'])
     col1.markdown('Average LOS by Stay and Room Type')
     #st.bar_chart(filtered_df_pi)
     adr_avg = filtered_df.groupby(['Stay', 'Room Type'])['Length of stay'].mean().reset_index()
     fig = px.bar(adr_avg, x='Stay', y='Length of stay', color='Room Type',text_auto=True)
     fig.update_layout(legend=dict(orientation="h",yanchor="bottom",y=1.02,xanchor="right",x=1))
     col1.plotly_chart(fig, use_container_width=True)
-    #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
+    #filtered_df_pi = pd.pivot_table(filtered_df, index='Stay',values=['ADR'])
     col2.markdown('Average LOS by Stay')
     #st.bar_chart(filtered_df_pi)
     adr_avg = filtered_df.groupby(['Stay'])['Length of stay'].mean().reset_index()
@@ -1124,7 +1201,7 @@ with t3:
         st.plotly_chart(fig,use_container_width=True)
 with t4:
     col1, col2 = st.columns(2)
-    #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
+    #filtered_df_pi = pd.pivot_table(filtered_df, index='Stay',values=['ADR'])
     col1.markdown('Average RN by Stay and Room Type')
     #st.bar_chart(filtered_df_pi)
     adr_avg = filtered_df.groupby(['Stay', 'Room Type'])['RN'].mean().reset_index()
@@ -1145,7 +1222,4 @@ with t4:
     with col2:
         grouped = filtered_df.groupby(['Stay', 'Channel']).size().reset_index(name='counts')
         fig = px.bar(grouped, x='Stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
-        st.plotly_chart(fig,use_container_width=True)    
-    
-    
-
+        st.plotly_chart(fig,use_container_width=True)
