@@ -768,8 +768,8 @@ if uploaded_files:
                                         '90-120': '#424949',
                                         '120+': '#FF5733'
                                     }
-                        fig = px.bar(df_sorted, x='count', y='Percentage', title='Lead Time Range Distribution',text_auto=True,color='count',color_discrete_map=color_mapping)
-                        fig1 = px.bar(los_counts, x='count', y='Percentage', title='Lead Time Range Distribution (Sorted)',text_auto=True,color='count',color_discrete_map=color_mapping)
+                        fig = px.bar(df_sorted, x='Lead time range', y='Percentage', title='Lead Time Range Distribution',text_auto=True,color='Lead time range',color_discrete_map=color_mapping)
+                        fig1 = px.bar(los_counts, x='Lead time range', y='Percentage', title='Lead Time Range Distribution (Sorted)',text_auto=True,color='Lead time range',color_discrete_map=color_mapping)
                         fig.update_layout(xaxis_title='Lead Time Range', yaxis_title='Percentage')
                         fig1.update_layout(xaxis_title='Lead Time Range', yaxis_title='Percentage')
                         col1, col2 = st.columns(2)
