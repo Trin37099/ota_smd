@@ -1223,7 +1223,7 @@ if uploaded_files:
             st.write(e)
 else:
     st.markdown("**No file uploaded.**")
-    st.markdown('Upload the file from the **SiteMinder**, then select the Reservations and select the data type **Booked-on** or **Check-in** according to your purpose. And finally, do ont forget to filter only **Booked.**')
+    st.markdown('Upload the file from the **SiteMinder**, then select the Reservations and select the data type **Booked-on** or **Check-in** according to your purpose. And finally, do not forget to filter only **Booked.**')
     st.markdown('')
     st.markdown('**AtMind Group**')
 
