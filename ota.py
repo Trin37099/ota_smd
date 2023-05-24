@@ -868,356 +868,283 @@ if uploaded_files:
                     col1, col2 = st.columns(2)
                     col1.plotly_chart(fig,use_container_width=True)
                     col2.plotly_chart(fig1,use_container_width=True)
-                st.markdown('**Pivot table by RN**')
-                t1,t2,t3 = st.tabs(['ADR','LOS','LT'])
+                
+            with tab_stay:
+                    all3 =  perform(all)
+                    if selected_channels:
+                        filtered_df = all3[all3['Channel'].isin(selected_channels)]
+                        if selected_room_types:
+                            if 'All' not in selected_room_types:
+                                filtered_df = filtered_df[filtered_df['Room Type'].isin(selected_room_types)]
+                        else:
+                            if selected_room_types:
+                                if 'All' not in selected_room_types:
+                                    filtered_df = all3[all3['Room Type'].isin(selected_room_types)]
+                    else:
+                        filtered_df = all3
+                filtered_df['Stay'] = filtered_df.apply(lambda row: pd.date_range(row['Check-in'], row['Check-out']- pd.Timedelta(days=1)), axis=1)
+                filtered_df = filtered_df.explode('Stay').reset_index(drop=True)
+                filtered_df = filtered_df[['Stay','Check-in','Guest names','Channel','ADR','Length of stay','Lead time','Lead time range','RN','Quantity','Room Type']]
+                #all3['Total discount'] = all3["ADR"]*all3["Length of stay"]*all3["Quantity"]
+                filtered_df['Day Name'] = filtered_df['Stay'].dt.strftime('%A')
+                filtered_df['Week of Year'] = filtered_df['Stay'].dt.isocalendar().week
+                month_dict = {v: k for k, v in enumerate(calendar.month_name)}
+                months = list(calendar.month_name)[1:]
+                selected_month = st.multiselect('Select a month stay', months)
+                # Assuming you have a select year input stored in the variable 'selected_year'
+                selected_year = st.selectbox('Select a year', ['2022', '2023', '2024','2025','2026'], index=1)
+                if selected_month and selected_year:
+                    selected_month_nums = [month_dict[month_name] for month_name in selected_month]
+                    filtered_df = filtered_df[
+                        (filtered_df['Stay'].dt.month.isin(selected_month_nums)) &
+                        (filtered_df['Stay'].dt.year == int(selected_year))
+                    ]
+                elif selected_month:
+                    selected_month_nums = [month_dict[month_name] for month_name in selected_month]
+                    filtered_df = filtered_df[filtered_df['Stay'].dt.month.isin(selected_month_nums)]
+                elif selected_year:
+                    filtered_df = filtered_df[filtered_df['Stay'].dt.year == int(selected_year)]
+
+                col1 , col2 = st.columns(2)
+                with col2:
+                    filter_LT = st.checkbox('Filter by LT')
+                    if filter_LT:
+                        min_val, max_val = int(filtered_df['Lead time'].min()), int(filtered_df['Lead time'].max())
+                        LT_min, LT_max = st.slider('Select a range of LT', min_val, max_val, (min_val, max_val))
+                        filtered_df = filtered_df[(filtered_df['Lead time'] >= LT_min) & (filtered_df['Lead time'] <= LT_max)]
+                    else:
+                        filtered_df = filtered_df.copy()
+                with col1:
+                    filter_LOS = st.checkbox('Filter by LOS')
+                    if filter_LOS:
+                        min_val, max_val = int(filtered_df['Length of stay'].min()), int(filtered_df['Length of stay'].max())
+                        LOS_min, LOS_max = st.slider('Select a range of LOS', min_val, max_val, (min_val, max_val))
+                        filtered_df = filtered_df[(filtered_df['Length of stay'] >= LOS_min) & (filtered_df['Length of stay'] <= LOS_max)]
+                    else:
+                        filtered_df = filtered_df.copy()
+                tab1, tab2, tab3 ,tab4, tab5 , tab6 ,tab7,tab8,tab9= st.tabs(["Average", "Median", "Statistic",'Data'
+                                                                    ,'Bar Chart','Room roomnight by channel'
+                                                                    ,'Room revenue by channel','Flexible/NRF','RO/ABF'])
+                with tab1:
+                    col0, col1, col2, col4 = st.columns(4)
+                    filtered_df['ADR discount'] = filtered_df["ADR"]*filtered_df["Length of stay"]*filtered_df["Quantity"]
+                    col0.metric('**Revenue**',f'{round(filtered_df["ADR discount"].sum(),4)}')
+                    col4.metric('**ADR with discount commission and ABF**',f'{round(filtered_df["ADR"].mean(),4)}',)
+                    col1.metric("**A.LT**", f'{round(filtered_df["Lead time"].mean(),4)}')
+                    col2.metric("**A.LOS**", f'{round(filtered_df["Length of stay"].mean(),4)}')
+                with tab2:
+                    col1, col2, col3 = st.columns(3)
+                    col3.metric('ADR with discount commission',f'{round(filtered_df["ADR"].median(),4)}')
+                    col1.metric("A.LT", f'{round(filtered_df["Lead time"].median(),4)}')
+                    col2.metric("A.LOS", f'{round(filtered_df["Length of stay"].median(),4)}')
+                with tab3:
+                    st.write(filtered_df.describe())
+                with tab4:
+                    st.write(filtered_df)
+                with tab5:
+                    tab11, tab12, tab13, tab14 = st.tabs(['A.LT','A.LOS','A.RN','ADR by month'])
+                    with tab14:
+                        month_order = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+                        mean_adr_by_month = filtered_df.groupby(['Room Type', filtered_df['Stay'].dt.month_name()])['ADR'].mean().reset_index()
+                        mean_adr_by_month['Stay'] = pd.Categorical(mean_adr_by_month['Stay'], categories=month_order)
+
+                        bar_chart = px.bar(mean_adr_by_month, x='Stay', y='ADR', color='Room Type',category_orders={'Stay': month_order},
+                                    text='ADR')
+                        bar_chart.update_traces(texttemplate='%{text:.2f}', textposition='auto')
+                        st.plotly_chart(bar_chart, use_container_width=True)
+                    with tab11:
+                        month_order = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+                        mean_adr_by_month = filtered_df.groupby(['Room Type', filtered_df['Stay'].dt.month_name()])['Lead time'].mean().reset_index()
+                        mean_adr_by_month['Stay'] = pd.Categorical(mean_adr_by_month['Stay'], categories=month_order)
+
+                        bar_chart = px.bar(mean_adr_by_month, x='Stay', y='Lead time', color='Room Type',category_orders={'Stay': month_order},
+                                    text='Lead time')
+                        bar_chart.update_traces(texttemplate='%{text:.2f}', textposition='auto')
+                        st.plotly_chart(bar_chart, use_container_width=True)
+                    with tab12:
+                        month_order = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+                        mean_adr_by_month = filtered_df.groupby(['Room Type', filtered_df['Stay'].dt.month_name()])['Length of stay'].mean().reset_index()
+                        mean_adr_by_month['Stay'] = pd.Categorical(mean_adr_by_month['Stay'], categories=month_order)
+
+                        bar_chart = px.bar(mean_adr_by_month, x='Stay', y='Length of stay', color='Room Type',category_orders={'Stay': month_order},
+                                text='Length of stay')
+                        bar_chart.update_traces(texttemplate='%{text:.2f}', textposition='auto')
+                        st.plotly_chart(bar_chart, use_container_width=True)
+                    with tab13:
+                        month_order = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+                        mean_adr_by_month = filtered_df.groupby(['Room Type', filtered_df['Stay'].dt.month_name()])['RN'].mean().reset_index()
+                        mean_adr_by_month['Stay'] = pd.Categorical(mean_adr_by_month['Stay'], categories=month_order)
+
+                        bar_chart = px.bar(mean_adr_by_month, x='Stay', y='RN', color='Room Type',category_orders={'Stay': month_order},
+                                    text='RN')
+                        bar_chart.update_traces(texttemplate='%{text:.2f}', textposition='auto')
+                        st.plotly_chart(bar_chart, use_container_width=True)
+                with tab6:
+                    counts = filtered_df[['Channel', 'Room Type','RN']].groupby(['Channel', 'Room Type']).sum().reset_index()
+                    fig = px.treemap(counts, path=['Channel', 'Room Type','RN'], values='RN', color='RN',color_continuous_scale='YlOrRd')
+                    st.plotly_chart(fig, use_container_width=True)
+                with tab7:
+                    counts = filtered_df[['Channel', 'Room Type','ADR discount']].groupby(['Channel', 'Room Type']).sum().reset_index()
+                    fig = px.treemap(counts, path=['Channel', 'Room Type','ADR discount'], values='ADR discount', color='ADR discount',color_continuous_scale='YlOrRd')
+                    st.plotly_chart(fig, use_container_width=True)
+                with tab8:
+                    counts = all2[['Channel','F/NRF']].groupby(['Channel', 'F/NRF']).size().reset_index(name='Count')
+                    total_count = counts['Count'].sum()
+                    fig = px.treemap(counts, path=['Channel', 'F/NRF'], values='Count', color='Count',color_continuous_scale='YlOrRd')
+                    st.plotly_chart(fig, use_container_width=True)
+                with tab9:
+                    counts = all2[['Channel','RO/ABF']].groupby(['Channel', 'RO/ABF']).size().reset_index(name='Count')
+                    total_count = counts['Count'].sum()
+                    fig = px.treemap(counts, path=['Channel', 'RO/ABF'], values='Count', color='Count',color_continuous_scale='YlOrRd')
+                    st.plotly_chart(fig, use_container_width=True)
+
+
+                st.markdown('**avg ADR without comm and ABF by channal and room type (if you do not filter month, it would be all month)**')
+                df_january = filtered_df[['Stay','Channel','Room Type','ADR']]
+                avg_adr = df_january.groupby(['Channel', 'Room Type'])['ADR'].mean()
+                result = avg_adr.reset_index().pivot_table(values='ADR', index='Channel', columns='Room Type', fill_value='none')
+                result = result.applymap(lambda x: '{:.2f}'.format(x) if x != 'none' else 'none')
+                st.write(result,use_container_width=True)
+
+                st.markdown('**You can zoom in**')
+                col1, col2 = st.columns(2)
+                channels = filtered_df['Channel'].unique()
+                num_colors = len(channels)
+                existing_colors = ['#636EFA', '#EF553B', '#00CC96', '#AB63FA', '#FFA15A', '#19D3F3', '#FF6692', '#B6E880', '#FF97FF', '#6392FF']
+                additional_colors = ['#FFD700', '#8B008B', '#00FF00']
+                combined_colors = existing_colors + additional_colors
+                colors = combined_colors
+                color_scale =  {channel: colors[i % num_colors] for i, channel in enumerate(channels)}
+                with col1:
+                    grouped = filtered_df.groupby(['Stay', 'Channel']).size().reset_index(name='counts')
+                    fig = px.bar(grouped, x='Stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+                    st.plotly_chart(fig,use_container_width=True)
+                with col2:
+                    grouped = filtered_df.groupby(['Lead time range', 'Channel']).size().reset_index(name='counts')
+                    fig = px.bar(grouped, x='Lead time range', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+                    st.plotly_chart(fig,use_container_width=True)
+
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.markdown('**count Stay in week of Year (calendar)**')
+                    pt = filtered_df.pivot_table(index='Week of Year', columns='Day Name', aggfunc='size')
+                    if set(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']).issubset(filtered_df['Day Name'].unique()):
+                        pt = filtered_df.pivot_table(index='Week of Year', columns='Day Name', aggfunc='size', fill_value=0)
+                        pt = pt[['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']]
+                        st.write(pt.style.background_gradient(cmap='coolwarm', axis=1))
+                    else:
+                        st.write('Not enough data to create a pivot table')
+                with col2:
+                    st.markdown('**A.LT that Check-in in week of Year (calendar)**')
+                    grouped = filtered_df.groupby(['Week of Year', 'Day Name'])
+                    averages = grouped['Lead time'].mean().reset_index()
+                    pt = pd.pivot_table(averages, values='Lead time', index=['Week of Year'], columns=['Day Name'])
+                    if set(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']).issubset(filtered_df['Day Name'].unique()):
+                        pt = pt.loc[:, ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']]
+                        st.write(pt.style.format("{:.2f}").background_gradient(cmap='coolwarm', axis=1))
+                    else:
+                        st.write('Not enough data to create a pivot table')
+
+                st.markdown('**Pivot table by Stay**')
+                t1,t2,t3,t4 = st.tabs(['ADR','LT','LOS','RN'])
                 with t1:
                     col1, col2 = st.columns(2)
-                    #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
-                    col1.markdown('Average ADR by RN and Room Type')
+                    #filtered_df_pi = pd.pivot_table(filtered_df, index='Stay',values=['ADR'])
+                    col1.markdown('Average ADR by Stay and Room Type')
                     #st.bar_chart(filtered_df_pi)
-                    adr_avg = filtered_df.groupby(['RN', 'Room Type'])['ADR'].mean().reset_index()
-                    fig = px.bar(adr_avg, x='RN', y='ADR', color='Room Type',text_auto=True)
+                    adr_avg = filtered_df.groupby(['Stay', 'Room Type'])['ADR'].mean().reset_index()
+                    fig = px.bar(adr_avg, x='Stay', y='ADR', color='Room Type',text_auto=True)
                     fig.update_layout(legend=dict(orientation="h",yanchor="bottom",y=1.02,xanchor="right",x=1))
                     col1.plotly_chart(fig, use_container_width=True)
-                    #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
-                    col2.markdown('Average ADR by RN')
+                    #filtered_df_pi = pd.pivot_table(filtered_df, index='Stay',values=['ADR'])
+                    col2.markdown('Average ADR by Stay')
                     #st.bar_chart(filtered_df_pi)
-                    adr_avg = filtered_df.groupby(['RN'])['ADR'].mean().reset_index()
-                    fig = px.bar(adr_avg, x='RN', y='ADR',text_auto=True)
+                    adr_avg = filtered_df.groupby(['Stay'])['ADR'].mean().reset_index()
+                    fig = px.bar(adr_avg, x='Stay', y='ADR',text_auto=True)
                     col2.plotly_chart(fig, use_container_width=True)
                     col1, col2 = st.columns(2)
                     with col1:
-                        grouped = filtered_df.groupby(['RN', 'ADR']).size().reset_index(name='counts')
-                        fig = px.bar(grouped, x='RN', y='counts', color='ADR',color_discrete_map=color_scale, barmode='stack')
+                        grouped = filtered_df.groupby(['Stay', 'ADR']).size().reset_index(name='counts')
+                        fig = px.bar(grouped, x='Stay', y='counts', color='ADR',color_discrete_map=color_scale, barmode='stack')
                         st.plotly_chart(fig,use_container_width=True)
                     with col2:
-                        grouped = filtered_df.groupby(['RN', 'Channel']).size().reset_index(name='counts')
-                        fig = px.bar(grouped, x='RN', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+                        grouped = filtered_df.groupby(['Stay', 'Channel']).size().reset_index(name='counts')
+                        fig = px.bar(grouped, x='Stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
                         st.plotly_chart(fig,use_container_width=True)
+
                 with t2:
                     col1, col2 = st.columns(2)
-                    #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
-                    col1.markdown('Average LOS by RN and Room Type')
+                    #filtered_df_pi = pd.pivot_table(filtered_df, index='Stay',values=['ADR'])
+                    col1.markdown('Average LT by Stay and Room Type')
                     #st.bar_chart(filtered_df_pi)
-                    adr_avg = filtered_df.groupby(['RN', 'Room Type'])['Length of stay'].mean().reset_index()
-                    fig = px.bar(adr_avg, x='RN', y='Length of stay', color='Room Type',text_auto=True)
+                    adr_avg = filtered_df.groupby(['Stay', 'Room Type'])['Lead time'].mean().reset_index()
+                    fig = px.bar(adr_avg, x='Stay', y='Lead time', color='Room Type',text_auto=True)
                     fig.update_layout(legend=dict(orientation="h",yanchor="bottom",y=1.02,xanchor="right",x=1))
                     col1.plotly_chart(fig, use_container_width=True)
-                    #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
-                    col2.markdown('Average LOS by RN')
-                    #st.bar_chart(filtered_df_pi)
-                    adr_avg = filtered_df.groupby(['RN'])['Length of stay'].mean().reset_index()
-                    fig = px.bar(adr_avg, x='RN', y='Length of stay',text_auto=True)
+                    #filtered_df_pi = pd.pivot_table(filtered_df, index='Stay',values=['ADR'])
+                    col2.markdown('Average LT by Stay')
+                    #st.bar_chart(filtered_df_pi)        
+                    adr_avg = filtered_df.groupby(['Stay'])['Lead time'].mean().reset_index()
+                    fig = px.bar(adr_avg, x='Stay', y='Lead time',text_auto=True)
                     col2.plotly_chart(fig, use_container_width=True)
                     col1, col2 = st.columns(2)
                     with col1:
-                        grouped = filtered_df.groupby(['RN', 'Length of stay']).size().reset_index(name='counts')
-                        fig = px.bar(grouped, x='RN', y='counts', color='Length of stay',color_discrete_map=color_scale, barmode='stack')
+                        grouped = filtered_df.groupby(['Stay', 'Lead time range']).size().reset_index(name='counts')            
+                        fig = px.bar(grouped, x='Stay', y='counts', color='Lead time range',color_discrete_map=color_scale, barmode='stack')
                         st.plotly_chart(fig,use_container_width=True)
+
                     with col2:
-                        grouped = filtered_df.groupby(['RN', 'Channel']).size().reset_index(name='counts')
-                        fig = px.bar(grouped, x='RN', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+                        grouped = filtered_df.groupby(['Stay', 'Channel']).size().reset_index(name='counts')
+                        fig = px.bar(grouped, x='Stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
                         st.plotly_chart(fig,use_container_width=True)
                 with t3:
                     col1, col2 = st.columns(2)
-                    #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
-                    col1.markdown('Average LT by RN and Room Type')
+                    #filtered_df_pi = pd.pivot_table(filtered_df, index='Stay',values=['ADR'])
+                    col1.markdown('Average LOS by Stay and Room Type')
                     #st.bar_chart(filtered_df_pi)
-                    adr_avg = filtered_df.groupby(['RN', 'Room Type'])['Lead time'].mean().reset_index()
-                    fig = px.bar(adr_avg, x='RN', y='Lead time', color='Room Type',text_auto=True)
+                    adr_avg = filtered_df.groupby(['Stay', 'Room Type'])['Length of stay'].mean().reset_index()
+                    fig = px.bar(adr_avg, x='Stay', y='Length of stay', color='Room Type',text_auto=True)
                     fig.update_layout(legend=dict(orientation="h",yanchor="bottom",y=1.02,xanchor="right",x=1))
                     col1.plotly_chart(fig, use_container_width=True)
-                    #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
-                    col2.markdown('Average LT by RN')
+                    #filtered_df_pi = pd.pivot_table(filtered_df, index='Stay',values=['ADR'])
+                    col2.markdown('Average LOS by Stay')
                     #st.bar_chart(filtered_df_pi)
-                    adr_avg = filtered_df.groupby(['RN'])['Lead time'].mean().reset_index()
-                    fig = px.bar(adr_avg, x='RN', y='Lead time',text_auto=True)
+                    adr_avg = filtered_df.groupby(['Stay'])['Length of stay'].mean().reset_index()
+                    fig = px.bar(adr_avg, x='Stay', y='Length of stay',text_auto=True)
                     col2.plotly_chart(fig, use_container_width=True)
                     col1, col2 = st.columns(2)
                     with col1:
-                        grouped = filtered_df.groupby(['RN', 'Lead time range']).size().reset_index(name='counts')
-                        fig = px.bar(grouped, x='RN', y='counts', color='Lead time range',color_discrete_map=color_scale, barmode='stack')
+                        grouped = filtered_df.groupby(['Stay', 'Length of stay']).size().reset_index(name='counts')
+                        fig = px.bar(grouped, x='Stay', y='counts', color='Length of stay',color_discrete_map=color_scale, barmode='stack')
                         st.plotly_chart(fig,use_container_width=True)
                     with col2:
-                        grouped = filtered_df.groupby(['RN', 'Channel']).size().reset_index(name='counts')
-                        fig = px.bar(grouped, x='RN', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+                        grouped = filtered_df.groupby(['Stay', 'Channel']).size().reset_index(name='counts')
+                        fig = px.bar(grouped, x='Stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
                         st.plotly_chart(fig,use_container_width=True)
-            with tab_stay:
-                all3 =  perform(all)
-                if selected_channels:
-                    filtered_df = all3[all3['Channel'].isin(selected_channels)]
-                    if selected_room_types:
-                        if 'All' not in selected_room_types:
-                            filtered_df = filtered_df[filtered_df['Room Type'].isin(selected_room_types)]
-                    else:
-                        if selected_room_types:
-                            if 'All' not in selected_room_types:
-                                filtered_df = all3[all3['Room Type'].isin(selected_room_types)]
-                else:
-                    filtered_df = all3
-            filtered_df['Stay'] = filtered_df.apply(lambda row: pd.date_range(row['Check-in'], row['Check-out']- pd.Timedelta(days=1)), axis=1)
-            filtered_df = filtered_df.explode('Stay').reset_index(drop=True)
-            filtered_df = filtered_df[['Stay','Check-in','Guest names','Channel','ADR','Length of stay','Lead time','Lead time range','RN','Quantity','Room Type']]
-            #all3['Total discount'] = all3["ADR"]*all3["Length of stay"]*all3["Quantity"]
-            filtered_df['Day Name'] = filtered_df['Stay'].dt.strftime('%A')
-            filtered_df['Week of Year'] = filtered_df['Stay'].dt.isocalendar().week
-            month_dict = {v: k for k, v in enumerate(calendar.month_name)}
-            months = list(calendar.month_name)[1:]
-            selected_month = st.multiselect('Select a month stay', months)
-            # Assuming you have a select year input stored in the variable 'selected_year'
-            selected_year = st.selectbox('Select a year', ['2022', '2023', '2024','2025','2026'], index=1)
-            if selected_month and selected_year:
-                selected_month_nums = [month_dict[month_name] for month_name in selected_month]
-                filtered_df = filtered_df[
-                    (filtered_df['Stay'].dt.month.isin(selected_month_nums)) &
-                    (filtered_df['Stay'].dt.year == int(selected_year))
-                ]
-            elif selected_month:
-                selected_month_nums = [month_dict[month_name] for month_name in selected_month]
-                filtered_df = filtered_df[filtered_df['Stay'].dt.month.isin(selected_month_nums)]
-            elif selected_year:
-                filtered_df = filtered_df[filtered_df['Stay'].dt.year == int(selected_year)]
-
-            col1 , col2 = st.columns(2)
-            with col2:
-                filter_LT = st.checkbox('Filter by LT')
-                if filter_LT:
-                    min_val, max_val = int(filtered_df['Lead time'].min()), int(filtered_df['Lead time'].max())
-                    LT_min, LT_max = st.slider('Select a range of LT', min_val, max_val, (min_val, max_val))
-                    filtered_df = filtered_df[(filtered_df['Lead time'] >= LT_min) & (filtered_df['Lead time'] <= LT_max)]
-                else:
-                    filtered_df = filtered_df.copy()
-            with col1:
-                filter_LOS = st.checkbox('Filter by LOS')
-                if filter_LOS:
-                    min_val, max_val = int(filtered_df['Length of stay'].min()), int(filtered_df['Length of stay'].max())
-                    LOS_min, LOS_max = st.slider('Select a range of LOS', min_val, max_val, (min_val, max_val))
-                    filtered_df = filtered_df[(filtered_df['Length of stay'] >= LOS_min) & (filtered_df['Length of stay'] <= LOS_max)]
-                else:
-                    filtered_df = filtered_df.copy()
-            tab1, tab2, tab3 ,tab4, tab5 , tab6 ,tab7,tab8,tab9= st.tabs(["Average", "Median", "Statistic",'Data'
-                                                                ,'Bar Chart','Room roomnight by channel'
-                                                                ,'Room revenue by channel','Flexible/NRF','RO/ABF'])
-            with tab1:
-                col0, col1, col2, col4 = st.columns(4)
-                filtered_df['ADR discount'] = filtered_df["ADR"]*filtered_df["Length of stay"]*filtered_df["Quantity"]
-                col0.metric('**Revenue**',f'{round(filtered_df["ADR discount"].sum(),4)}')
-                col4.metric('**ADR with discount commission and ABF**',f'{round(filtered_df["ADR"].mean(),4)}',)
-                col1.metric("**A.LT**", f'{round(filtered_df["Lead time"].mean(),4)}')
-                col2.metric("**A.LOS**", f'{round(filtered_df["Length of stay"].mean(),4)}')
-            with tab2:
-                col1, col2, col3 = st.columns(3)
-                col3.metric('ADR with discount commission',f'{round(filtered_df["ADR"].median(),4)}')
-                col1.metric("A.LT", f'{round(filtered_df["Lead time"].median(),4)}')
-                col2.metric("A.LOS", f'{round(filtered_df["Length of stay"].median(),4)}')
-            with tab3:
-                st.write(filtered_df.describe())
-            with tab4:
-                st.write(filtered_df)
-            with tab5:
-                tab11, tab12, tab13, tab14 = st.tabs(['A.LT','A.LOS','A.RN','ADR by month'])
-                with tab14:
-                    month_order = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-                    mean_adr_by_month = filtered_df.groupby(['Room Type', filtered_df['Stay'].dt.month_name()])['ADR'].mean().reset_index()
-                    mean_adr_by_month['Stay'] = pd.Categorical(mean_adr_by_month['Stay'], categories=month_order)
-
-                    bar_chart = px.bar(mean_adr_by_month, x='Stay', y='ADR', color='Room Type',category_orders={'Stay': month_order},
-                                text='ADR')
-                    bar_chart.update_traces(texttemplate='%{text:.2f}', textposition='auto')
-                    st.plotly_chart(bar_chart, use_container_width=True)
-                with tab11:
-                    month_order = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-                    mean_adr_by_month = filtered_df.groupby(['Room Type', filtered_df['Stay'].dt.month_name()])['Lead time'].mean().reset_index()
-                    mean_adr_by_month['Stay'] = pd.Categorical(mean_adr_by_month['Stay'], categories=month_order)
-
-                    bar_chart = px.bar(mean_adr_by_month, x='Stay', y='Lead time', color='Room Type',category_orders={'Stay': month_order},
-                                text='Lead time')
-                    bar_chart.update_traces(texttemplate='%{text:.2f}', textposition='auto')
-                    st.plotly_chart(bar_chart, use_container_width=True)
-                with tab12:
-                    month_order = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-                    mean_adr_by_month = filtered_df.groupby(['Room Type', filtered_df['Stay'].dt.month_name()])['Length of stay'].mean().reset_index()
-                    mean_adr_by_month['Stay'] = pd.Categorical(mean_adr_by_month['Stay'], categories=month_order)
-
-                    bar_chart = px.bar(mean_adr_by_month, x='Stay', y='Length of stay', color='Room Type',category_orders={'Stay': month_order},
-                            text='Length of stay')
-                    bar_chart.update_traces(texttemplate='%{text:.2f}', textposition='auto')
-                    st.plotly_chart(bar_chart, use_container_width=True)
-                with tab13:
-                    month_order = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-                    mean_adr_by_month = filtered_df.groupby(['Room Type', filtered_df['Stay'].dt.month_name()])['RN'].mean().reset_index()
-                    mean_adr_by_month['Stay'] = pd.Categorical(mean_adr_by_month['Stay'], categories=month_order)
-
-                    bar_chart = px.bar(mean_adr_by_month, x='Stay', y='RN', color='Room Type',category_orders={'Stay': month_order},
-                                text='RN')
-                    bar_chart.update_traces(texttemplate='%{text:.2f}', textposition='auto')
-                    st.plotly_chart(bar_chart, use_container_width=True)
-            with tab6:
-                counts = filtered_df[['Channel', 'Room Type','RN']].groupby(['Channel', 'Room Type']).sum().reset_index()
-                fig = px.treemap(counts, path=['Channel', 'Room Type','RN'], values='RN', color='RN',color_continuous_scale='YlOrRd')
-                st.plotly_chart(fig, use_container_width=True)
-            with tab7:
-                counts = filtered_df[['Channel', 'Room Type','ADR discount']].groupby(['Channel', 'Room Type']).sum().reset_index()
-                fig = px.treemap(counts, path=['Channel', 'Room Type','ADR discount'], values='ADR discount', color='ADR discount',color_continuous_scale='YlOrRd')
-                st.plotly_chart(fig, use_container_width=True)
-            with tab8:
-                counts = all2[['Channel','F/NRF']].groupby(['Channel', 'F/NRF']).size().reset_index(name='Count')
-                total_count = counts['Count'].sum()
-                fig = px.treemap(counts, path=['Channel', 'F/NRF'], values='Count', color='Count',color_continuous_scale='YlOrRd')
-                st.plotly_chart(fig, use_container_width=True)
-            with tab9:
-                counts = all2[['Channel','RO/ABF']].groupby(['Channel', 'RO/ABF']).size().reset_index(name='Count')
-                total_count = counts['Count'].sum()
-                fig = px.treemap(counts, path=['Channel', 'RO/ABF'], values='Count', color='Count',color_continuous_scale='YlOrRd')
-                st.plotly_chart(fig, use_container_width=True)
-
-
-            st.markdown('**avg ADR without comm and ABF by channal and room type (if you do not filter month, it would be all month)**')
-            df_january = filtered_df[['Stay','Channel','Room Type','ADR']]
-            avg_adr = df_january.groupby(['Channel', 'Room Type'])['ADR'].mean()
-            result = avg_adr.reset_index().pivot_table(values='ADR', index='Channel', columns='Room Type', fill_value='none')
-            result = result.applymap(lambda x: '{:.2f}'.format(x) if x != 'none' else 'none')
-            st.write(result,use_container_width=True)
-
-            st.markdown('**You can zoom in**')
-            col1, col2 = st.columns(2)
-            channels = filtered_df['Channel'].unique()
-            num_colors = len(channels)
-            existing_colors = ['#636EFA', '#EF553B', '#00CC96', '#AB63FA', '#FFA15A', '#19D3F3', '#FF6692', '#B6E880', '#FF97FF', '#6392FF']
-            additional_colors = ['#FFD700', '#8B008B', '#00FF00']
-            combined_colors = existing_colors + additional_colors
-            colors = combined_colors
-            color_scale =  {channel: colors[i % num_colors] for i, channel in enumerate(channels)}
-            with col1:
-                grouped = filtered_df.groupby(['Stay', 'Channel']).size().reset_index(name='counts')
-                fig = px.bar(grouped, x='Stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
-                st.plotly_chart(fig,use_container_width=True)
-            with col2:
-                grouped = filtered_df.groupby(['Lead time range', 'Channel']).size().reset_index(name='counts')
-                fig = px.bar(grouped, x='Lead time range', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
-                st.plotly_chart(fig,use_container_width=True)
-
-            col1, col2 = st.columns(2)
-            with col1:
-                st.markdown('**count Stay in week of Year (calendar)**')
-                pt = filtered_df.pivot_table(index='Week of Year', columns='Day Name', aggfunc='size')
-                if set(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']).issubset(filtered_df['Day Name'].unique()):
-                    pt = filtered_df.pivot_table(index='Week of Year', columns='Day Name', aggfunc='size', fill_value=0)
-                    pt = pt[['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']]
-                    st.write(pt.style.background_gradient(cmap='coolwarm', axis=1))
-                else:
-                    st.write('Not enough data to create a pivot table')
-            with col2:
-                st.markdown('**A.LT that Check-in in week of Year (calendar)**')
-                grouped = filtered_df.groupby(['Week of Year', 'Day Name'])
-                averages = grouped['Lead time'].mean().reset_index()
-                pt = pd.pivot_table(averages, values='Lead time', index=['Week of Year'], columns=['Day Name'])
-                if set(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']).issubset(filtered_df['Day Name'].unique()):
-                    pt = pt.loc[:, ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']]
-                    st.write(pt.style.format("{:.2f}").background_gradient(cmap='coolwarm', axis=1))
-                else:
-                    st.write('Not enough data to create a pivot table')
-
-            st.markdown('**Pivot table by Stay**')
-            t1,t2,t3,t4 = st.tabs(['ADR','LT','LOS','RN'])
-            with t1:
-                col1, col2 = st.columns(2)
-                #filtered_df_pi = pd.pivot_table(filtered_df, index='Stay',values=['ADR'])
-                col1.markdown('Average ADR by Stay and Room Type')
-                #st.bar_chart(filtered_df_pi)
-                adr_avg = filtered_df.groupby(['Stay', 'Room Type'])['ADR'].mean().reset_index()
-                fig = px.bar(adr_avg, x='Stay', y='ADR', color='Room Type',text_auto=True)
-                fig.update_layout(legend=dict(orientation="h",yanchor="bottom",y=1.02,xanchor="right",x=1))
-                col1.plotly_chart(fig, use_container_width=True)
-                #filtered_df_pi = pd.pivot_table(filtered_df, index='Stay',values=['ADR'])
-                col2.markdown('Average ADR by Stay')
-                #st.bar_chart(filtered_df_pi)
-                adr_avg = filtered_df.groupby(['Stay'])['ADR'].mean().reset_index()
-                fig = px.bar(adr_avg, x='Stay', y='ADR',text_auto=True)
-                col2.plotly_chart(fig, use_container_width=True)
-                col1, col2 = st.columns(2)
-                with col1:
-                    grouped = filtered_df.groupby(['Stay', 'ADR']).size().reset_index(name='counts')
-                    fig = px.bar(grouped, x='Stay', y='counts', color='ADR',color_discrete_map=color_scale, barmode='stack')
-                    st.plotly_chart(fig,use_container_width=True)
-                with col2:
-                    grouped = filtered_df.groupby(['Stay', 'Channel']).size().reset_index(name='counts')
-                    fig = px.bar(grouped, x='Stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
-                    st.plotly_chart(fig,use_container_width=True)
-
-            with t2:
-                col1, col2 = st.columns(2)
-                #filtered_df_pi = pd.pivot_table(filtered_df, index='Stay',values=['ADR'])
-                col1.markdown('Average LT by Stay and Room Type')
-                #st.bar_chart(filtered_df_pi)
-                adr_avg = filtered_df.groupby(['Stay', 'Room Type'])['Lead time'].mean().reset_index()
-                fig = px.bar(adr_avg, x='Stay', y='Lead time', color='Room Type',text_auto=True)
-                fig.update_layout(legend=dict(orientation="h",yanchor="bottom",y=1.02,xanchor="right",x=1))
-                col1.plotly_chart(fig, use_container_width=True)
-                #filtered_df_pi = pd.pivot_table(filtered_df, index='Stay',values=['ADR'])
-                col2.markdown('Average LT by Stay')
-                #st.bar_chart(filtered_df_pi)        
-                adr_avg = filtered_df.groupby(['Stay'])['Lead time'].mean().reset_index()
-                fig = px.bar(adr_avg, x='Stay', y='Lead time',text_auto=True)
-                col2.plotly_chart(fig, use_container_width=True)
-                col1, col2 = st.columns(2)
-                with col1:
-                    grouped = filtered_df.groupby(['Stay', 'Lead time range']).size().reset_index(name='counts')            
-                    fig = px.bar(grouped, x='Stay', y='counts', color='Lead time range',color_discrete_map=color_scale, barmode='stack')
-                    st.plotly_chart(fig,use_container_width=True)
-                    
-                with col2:
-                    grouped = filtered_df.groupby(['Stay', 'Channel']).size().reset_index(name='counts')
-                    fig = px.bar(grouped, x='Stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
-                    st.plotly_chart(fig,use_container_width=True)
-            with t3:
-                col1, col2 = st.columns(2)
-                #filtered_df_pi = pd.pivot_table(filtered_df, index='Stay',values=['ADR'])
-                col1.markdown('Average LOS by Stay and Room Type')
-                #st.bar_chart(filtered_df_pi)
-                adr_avg = filtered_df.groupby(['Stay', 'Room Type'])['Length of stay'].mean().reset_index()
-                fig = px.bar(adr_avg, x='Stay', y='Length of stay', color='Room Type',text_auto=True)
-                fig.update_layout(legend=dict(orientation="h",yanchor="bottom",y=1.02,xanchor="right",x=1))
-                col1.plotly_chart(fig, use_container_width=True)
-                #filtered_df_pi = pd.pivot_table(filtered_df, index='Stay',values=['ADR'])
-                col2.markdown('Average LOS by Stay')
-                #st.bar_chart(filtered_df_pi)
-                adr_avg = filtered_df.groupby(['Stay'])['Length of stay'].mean().reset_index()
-                fig = px.bar(adr_avg, x='Stay', y='Length of stay',text_auto=True)
-                col2.plotly_chart(fig, use_container_width=True)
-                col1, col2 = st.columns(2)
-                with col1:
-                    grouped = filtered_df.groupby(['Stay', 'Length of stay']).size().reset_index(name='counts')
-                    fig = px.bar(grouped, x='Stay', y='counts', color='Length of stay',color_discrete_map=color_scale, barmode='stack')
-                    st.plotly_chart(fig,use_container_width=True)
-                with col2:
-                    grouped = filtered_df.groupby(['Stay', 'Channel']).size().reset_index(name='counts')
-                    fig = px.bar(grouped, x='Stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
-                    st.plotly_chart(fig,use_container_width=True)
-            with t4:
-                col1, col2 = st.columns(2)
-                #filtered_df_pi = pd.pivot_table(filtered_df, index='Stay',values=['ADR'])
-                col1.markdown('Average RN by Stay and Room Type')
-                #st.bar_chart(filtered_df_pi)
-                adr_avg = filtered_df.groupby(['Stay', 'Room Type'])['RN'].mean().reset_index()
-                fig = px.bar(adr_avg, x='Stay', y='RN', color='Room Type',text_auto=True)
-                fig.update_layout(legend=dict(orientation="h",yanchor="bottom",y=1.02,xanchor="right",x=1))
-                col1.plotly_chart(fig, use_container_width=True)
-                #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
-                col2.markdown('Average RN by Stay')
-                #st.bar_chart(filtered_df_pi)
-                adr_avg = filtered_df.groupby(['Stay'])['RN'].mean().reset_index()
-                fig = px.bar(adr_avg, x='Stay', y='RN',text_auto=True)
-                col2.plotly_chart(fig, use_container_width=True)
-                col1, col2 = st.columns(2)
-                with col1:
-                    grouped = filtered_df.groupby(['Stay', 'RN']).size().reset_index(name='counts')
-                    fig = px.bar(grouped, x='Stay', y='counts', color='RN',color_discrete_map=color_scale, barmode='stack')
-                    st.plotly_chart(fig,use_container_width=True)
-                with col2:
-                    grouped = filtered_df.groupby(['Stay', 'Channel']).size().reset_index(name='counts')
-                    fig = px.bar(grouped, x='Stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
-                    st.plotly_chart(fig,use_container_width=True)
+                with t4:
+                    col1, col2 = st.columns(2)
+                    #filtered_df_pi = pd.pivot_table(filtered_df, index='Stay',values=['ADR'])
+                    col1.markdown('Average RN by Stay and Room Type')
+                    #st.bar_chart(filtered_df_pi)
+                    adr_avg = filtered_df.groupby(['Stay', 'Room Type'])['RN'].mean().reset_index()
+                    fig = px.bar(adr_avg, x='Stay', y='RN', color='Room Type',text_auto=True)
+                    fig.update_layout(legend=dict(orientation="h",yanchor="bottom",y=1.02,xanchor="right",x=1))
+                    col1.plotly_chart(fig, use_container_width=True)
+                    #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
+                    col2.markdown('Average RN by Stay')
+                    #st.bar_chart(filtered_df_pi)
+                    adr_avg = filtered_df.groupby(['Stay'])['RN'].mean().reset_index()
+                    fig = px.bar(adr_avg, x='Stay', y='RN',text_auto=True)
+                    col2.plotly_chart(fig, use_container_width=True)
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        grouped = filtered_df.groupby(['Stay', 'RN']).size().reset_index(name='counts')
+                        fig = px.bar(grouped, x='Stay', y='counts', color='RN',color_discrete_map=color_scale, barmode='stack')
+                        st.plotly_chart(fig,use_container_width=True)
+                    with col2:
+                        grouped = filtered_df.groupby(['Stay', 'Channel']).size().reset_index(name='counts')
+                        fig = px.bar(grouped, x='Stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+                        st.plotly_chart(fig,use_container_width=True)
         except Exception as e:
             st.write(f"Error reading file: {uploaded_file.name}")
             st.write(e)
