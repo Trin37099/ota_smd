@@ -1151,7 +1151,7 @@ if uploaded_files:
                     fig = px.treemap(counts, path=['Channel', 'RO/ABF'], values='Count', color='Count',color_continuous_scale='YlOrRd')
                     st.plotly_chart(fig, use_container_width=True)
                     
-                ADR_S,ADR_A,LT_S,LOS_S = st.tabs(['**ADR by channel and room type**','**ADR by Channel (All Room type)**','**LT by channel and room type**','**LOS by channel and room type**'])
+                ADR_S,LT_S,LOS_S = st.tabs(['**ADR by channel and room type**','**LOS by channel and room type**','**LT by channel and room type**'])
                 with ADR_S:
                     st.markdown('**avg ADR without comm and ABF by channal and room type (if you do not filter month, it would be all month)**')
                     df_january = filtered_df[['Stay','Channel','Room Type','ADR']]
@@ -1161,25 +1161,22 @@ if uploaded_files:
                     result['ALL ROOM TYPE'] = avg_adr_all_room_type
                     result = result.applymap(lambda x: int(x)  if x != 'none' else 'none')
                     st.write(result,use_container_width=True)
-                with ADR_A :
-                    st.markdown('**avg ADR without comm and ABF by channal and (if you do not filter month, it would be all month)**')
-                    df_january = filtered_df[['Stay','Channel','ADR']]
-                    avg_adr = df_january.groupby(['Channel'])['ADR'].mean()
-                    result = avg_adr.reset_index().pivot_table(values='ADR', index='Channel', fill_value='none')
-                    result = result.applymap(lambda x: int(x)  if x != 'none' else 'none')
-                    st.write(result,use_container_width=True)
                 with LOS_S:
                     st.markdown('**avg ADR without comm and ABF by channal and room type (if you do not filter month, it would be all month)**')
                     df_january = filtered_df[['Stay','Channel','Room Type','Length of stay']]
                     avg_adr = df_january.groupby(['Channel', 'Room Type'])['Length of stay'].mean()
                     result = avg_adr.reset_index().pivot_table(values='Length of stay', index='Channel', columns='Room Type', fill_value='none')
+                    avg_adr_all_room_type = df_january.groupby(['Channel'])['Lengeth of stay'].mean()
+                    result['ALL ROOM TYPE'] = avg_adr_all_room_type
                     result = result.applymap(lambda x: int(x)  if x != 'none' else 'none')
                     st.write(result,use_container_width=True)
                 with LT_S:
                     st.markdown('**avg ADR without comm and ABF by channal and room type (if you do not filter month, it would be all month)**')
-                    df_january = filtered_df[['Stay','Channel','Room Type','Length of stay']]
-                    avg_adr = df_january.groupby(['Channel', 'Room Type'])['Length of stay'].mean()
-                    result = avg_adr.reset_index().pivot_table(values='Length of stay', index='Channel', columns='Room Type', fill_value='none')
+                    df_january = filtered_df[['Stay','Channel','Room Type','Lead time']]
+                    avg_adr = df_january.groupby(['Channel', 'Room Type'])['Lead time'].mean()
+                    result = avg_adr.reset_index().pivot_table(values='Lead time', index='Channel', columns='Room Type', fill_value='none')
+                    avg_adr_all_room_type = df_january.groupby(['Channel'])['Lead time'].mean()
+                    result['ALL ROOM TYPE'] = avg_adr_all_room_type
                     result = result.applymap(lambda x: int(x)  if x != 'none' else 'none')
                     st.write(result,use_container_width=True)
 
