@@ -1045,7 +1045,7 @@ if uploaded_files:
                     selected_month_nums = [month_dict[month_name] for month_name in selected_month]
                     filtered_df = filtered_df[
                         (filtered_df['Stay'].dt.month.isin(selected_month_nums)) &
-                        (filtered_df['Stay'].dt.year == int(selected_year))
+                        (filtered_df['Stay'].dt.year == int(selected_year))]
                     
                 elif selected_month:
                     selected_month_nums = [month_dict[month_name] for month_name in selected_month]
@@ -1150,7 +1150,7 @@ if uploaded_files:
                     total_count = counts['Count'].sum()
                     fig = px.treemap(counts, path=['Channel', 'RO/ABF'], values='Count', color='Count',color_continuous_scale='YlOrRd')
                     st.plotly_chart(fig, use_container_width=True)
-
+                    
                 ADR_S,ADR_A,LT_S,LOS_S = st.tabs(['**ADR by channel and room type**','**ADR by Channel (All Room type)**','**LT by channel and room type**','**LOS by channel and room type**'])
                 with ADR_S:
                     st.markdown('**avg ADR without comm and ABF by channal and room type (if you do not filter month, it would be all month)**')
