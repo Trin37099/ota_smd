@@ -1166,7 +1166,7 @@ if uploaded_files:
                     df_january = filtered_df[['Stay','Channel','Room Type','Length of stay']]
                     avg_adr = df_january.groupby(['Channel', 'Room Type'])['Length of stay'].mean()
                     result = avg_adr.reset_index().pivot_table(values='Length of stay', index='Channel', columns='Room Type', fill_value='none')
-                    avg_adr_all_room_type = df_january.groupby(['Channel'])['Lengeth of stay'].mean()
+                    avg_adr_all_room_type = df_january.groupby(['Channel'])['Length of stay'].mean()
                     result['ALL ROOM TYPE'] = avg_adr_all_room_type
                     result = result.applymap(lambda x: int(x)  if x != 'none' else 'none')
                     st.write(result,use_container_width=True)
