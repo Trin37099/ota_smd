@@ -1046,7 +1046,7 @@ if uploaded_files:
                     filtered_df = filtered_df[
                         (filtered_df['Stay'].dt.month.isin(selected_month_nums)) &
                         (filtered_df['Stay'].dt.year == int(selected_year))
-                    ]
+                    
                 elif selected_month:
                     selected_month_nums = [month_dict[month_name] for month_name in selected_month]
                     filtered_df = filtered_df[filtered_df['Stay'].dt.month.isin(selected_month_nums)]
@@ -1157,6 +1157,8 @@ if uploaded_files:
                     df_january = filtered_df[['Stay','Channel','Room Type','ADR']]
                     avg_adr = df_january.groupby(['Channel', 'Room Type'])['ADR'].mean()
                     result = avg_adr.reset_index().pivot_table(values='ADR', index='Channel', columns='Room Type', fill_value='none')
+                    avg_adr_all_room_type = df_january.groupby(['Channel'])['ADR'].mean()
+                    result['ALL ROOM TYPE'] = avg_adr_all_room_type
                     result = result.applymap(lambda x: int(x)  if x != 'none' else 'none')
                     st.write(result,use_container_width=True)
                 with ADR_A :
