@@ -1151,7 +1151,7 @@ if uploaded_files:
                     fig = px.treemap(counts, path=['Channel', 'RO/ABF'], values='Count', color='Count',color_continuous_scale='YlOrRd')
                     st.plotly_chart(fig, use_container_width=True)
                     
-                ADR_S,LT_S,LOS_S = st.tabs(['**ADR by channel and room type**','**LOS by channel and room type**','**LT by channel and room type**'])
+                ADR_S,LOS_S,LT_S = st.tabs(['**ADR by channel and room type**','**LOS by channel and room type**','**LT by channel and room type**'])
                 with ADR_S:
                     st.markdown('**avg ADR without comm and ABF by channal and room type (if you do not filter month, it would be all month)**')
                     df_january = filtered_df[['Stay','Channel','Room Type','ADR']]
