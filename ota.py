@@ -270,6 +270,13 @@ if uploaded_files:
                     return 'UNKNOWN'
                 else:
                     return 'Flexible'
+            def parse_date(date_string):
+                for format in date_formats:
+                    try:
+                       return pd.to_datetime(date_string, format=format)
+                except ValueError:
+                    pass
+                return pd.NaT
 
             def convert_ABF(room_type):
                 if re.search(r'\bBREAKFAST\b|\bWITH BREAKFAST\b|\bBREAKFAST INCLUDED\b', room_type):
@@ -293,8 +300,8 @@ if uploaded_files:
                             ,'Total price']]
                 all1 = all1.dropna()
                 date_formats = ["%d/%m/%Y", "%Y-%m-%d"]
-                all1["Check-out"] = pd.to_datetime(all1["Check-out"], format=date_formats)
-                all1["Check-in"] = pd.to_datetime(all1["Check-in"], format=date_formats)
+                all1["Check-out"] = all1["Check-out"].apply(parse_date)
+                all1["Check-in"] = all1["Check-in"].apply(parse_date)
                 all1['Booked-on date'] = pd.to_datetime(all1['Booked-on date'])
                 all1['Booked'] = all1['Booked-on date'].dt.strftime('%m/%d/%Y')
                 all1['Booked'] = pd.to_datetime(all1['Booked'])
