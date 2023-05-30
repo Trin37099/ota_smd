@@ -270,6 +270,7 @@ if uploaded_files:
                     return 'UNKNOWN'
                 else:
                     return 'Flexible'
+            date_formats = ["%d/%m/%Y", "%Y-%m-%d"]
             def parse_date(date_string):
                 for format in date_formats:
                     try:
