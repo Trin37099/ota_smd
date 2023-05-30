@@ -293,11 +293,11 @@ if uploaded_files:
                             ,'Total price']]
                 all1 = all1.dropna()
 
-                all1["Check-in"] = pd.to_datetime(all1["Check-in"])
+                all1["Check-in"] = pd.to_datetime(all1["Check-in"], format="%d/%m/%Y")
                 all1['Booked-on date'] = pd.to_datetime(all1['Booked-on date'])
                 all1['Booked'] = all1['Booked-on date'].dt.strftime('%m/%d/%Y')
                 all1['Booked'] = pd.to_datetime(all1['Booked'])
-                all1["Check-out"] = pd.to_datetime(all1["Check-out"])
+                all1["Check-out"] = pd.to_datetime(all1["Check-out"], format="%d/%m/%Y")
                 all1["Length of stay"] = (all1["Check-out"] - all1["Check-in"]).dt.days
                 all1["Lead time"] = (all1["Check-in"] - all1["Booked"]).dt.days
                 value_ranges = [-1, 0, 1, 2, 3, 4, 5, 6, 7,8, 14, 30, 90, 120]
