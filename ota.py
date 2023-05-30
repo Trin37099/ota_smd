@@ -274,8 +274,8 @@ if uploaded_files:
                 for format in date_formats:
                     try:
                        return pd.to_datetime(date_string, format=format)
-                except ValueError:
-                    pass
+                    except ValueError:
+                        pass
                 return pd.NaT
 
             def convert_ABF(room_type):
