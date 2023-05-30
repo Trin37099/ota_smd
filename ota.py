@@ -1171,7 +1171,7 @@ if uploaded_files:
                     result = result.applymap(lambda x: int(x)  if x != 'none' else 'none')
                     st.write(result,use_container_width=True)
                 with LOS_S:
-                    st.markdown('**avg ADR without comm and ABF by channal and room type (if you do not filter month, it would be all month)**')
+                    st.markdown('**avg LOS without comm and ABF by channal and room type (if you do not filter month, it would be all month)**')
                     df_january = filtered_df[['Stay','Channel','Room Type','Length of stay']]
                     avg_adr = df_january.groupby(['Channel', 'Room Type'])['Length of stay'].mean()
                     result = avg_adr.reset_index().pivot_table(values='Length of stay', index='Channel', columns='Room Type', fill_value='none')
@@ -1180,7 +1180,7 @@ if uploaded_files:
                     result = result.applymap(lambda x: int(x)  if x != 'none' else 'none')
                     st.write(result,use_container_width=True)
                 with LT_S:
-                    st.markdown('**avg ADR without comm and ABF by channal and room type (if you do not filter month, it would be all month)**')
+                    st.markdown('**avg LT without comm and ABF by channal and room type (if you do not filter month, it would be all month)**')
                     df_january = filtered_df[['Stay','Channel','Room Type','Lead time']]
                     avg_adr = df_january.groupby(['Channel', 'Room Type'])['Lead time'].mean()
                     result = avg_adr.reset_index().pivot_table(values='Lead time', index='Channel', columns='Room Type', fill_value='none')
