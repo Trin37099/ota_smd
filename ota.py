@@ -548,7 +548,7 @@ if uploaded_files:
                     st.plotly_chart(fig, use_container_width=True)
                 with tab7:
                     counts = filtered_df[['Channel', 'Room Type','ADR discount']].groupby(['Channel', 'Room Type']).sum().reset_index()
-                    fig = px.treemap(counts, path=['Channel', 'Room Type','ADR discount'], values='ADR discount', color='ADR discount',color_continuous_scale='YlOrRd')
+                    fig = px.treemap(counts, path=['Channel', 'Room Type','ADR discount'], values='ADR discount', color='ADR discount',color_continuous_scale='YlOrRd',text_auto=True)
                     st.plotly_chart(fig, use_container_width=True)
                 with tab0:
                     counts = all2[['Channel', 'Room Type']].groupby(['Channel', 'Room Type']).size().reset_index(name='Count')
