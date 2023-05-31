@@ -804,9 +804,9 @@ if uploaded_files:
                     with t3:
                         col1, col2 = st.columns(2)
                         #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
-                        col1.markdown('**Average RN by LT and Room Type**')
+                        col1.markdown('**Count RN by LT and Room Type**')
                         #st.bar_chart(filtered_df_pi)
-                        adr_avg = filtered_df.groupby(['Lead time range', 'Room Type'])['RN'].mean().reset_index()
+                        adr_avg = filtered_df.groupby(['Lead time range', 'Room Type'])['RN'].size().reset_index()
                         fig = px.bar(adr_avg, x='Lead time range', y='RN', color='Room Type',text_auto=True)
                         fig.update_layout(legend=dict(orientation="h",yanchor="bottom",y=1.02,xanchor="right",x=1))
                         col1.plotly_chart(fig, use_container_width=True)
