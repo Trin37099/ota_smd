@@ -391,24 +391,12 @@ if uploaded_files:
                                 filtered_df = all2[all2['Room Type'].isin(selected_room_types)]
                 else:
                     filtered_df = all2
-
-                month_dict = {v: k for k, v in enumerate(calendar.month_name)}
-                months = list(calendar.month_name)[1:]
-                selected_month = st.multiselect('Select a month Booked', months)
-
-                selected_year = st.selectbox('Select a year ', ['2022', '2023', '2024','2025','2026'], index=1)
-
-                if selected_month and selected_year:
-                    selected_month_nums = [month_dict[month_name] for month_name in selected_month]
-                    filtered_df = filtered_df[
-                        (filtered_df['Booked'].dt.month.isin(selected_month_nums)) &
-                        (filtered_df['Booked'].dt.year == int(selected_year))
-                    ]
-                elif selected_month:
-                    selected_month_nums = [month_dict[month_name] for month_name in selected_month]
-                    filtered_df = filtered_df[filtered_df['Booked'].dt.month.isin(selected_month_nums)]
-                elif selected_year:
-                    filtered_df = filtered_df[filtered_df['Booked'].dt.year == int(selected_year)]
+                col1,col2 = st.columns(2)
+                with col1:
+                    start_date = st.date_input('Select a start date', value=filtered_df['Booked'].min())
+                with col2:
+                    end_date = st.date_input('Select an end date', value=filtered_df['Booked'].max())
+                filtered_df = filtered_df[(filtered_df['Booked'] >= pd.Timestamp(start_date)) & (filtered_df['Booked'] <= pd.Timestamp(end_date))]
 
                 col1 , col2 ,col3 = st.columns(3)
                 with col2:
@@ -435,54 +423,8 @@ if uploaded_files:
                         filtered_df = filtered_df[(filtered_df['RN'] >= rn_min) & (filtered_df['RN'] <= rn_max)]
                     else:
                         filtered_df = filtered_df.copy()
-
-                col1, col2 = st.columns(2)
-                channels = filtered_df['Channel'].unique()
-                num_colors = len(channels)
-                existing_colors = ['#636EFA', '#EF553B', '#00CC96', '#AB63FA', '#FFA15A', '#19D3F3', '#FF6692', '#B6E880', '#FF97FF', '#6392FF']
-                additional_colors = ['#FFD700', '#8B008B', '#00FF00']
-                combined_colors = existing_colors + additional_colors
-                colors = combined_colors
-                color_scale =  {channel: colors[i % num_colors] for i, channel in enumerate(channels)}
-                color_scale1 =  {channel: colors[i % num_colors] for i, channel in enumerate(channels)}
                 
-                ch,rt = st.tabs(['Count Booked by Channel','Count Booked by Room type'])
-                with ch:
-                    st.markdown('**Count Booked by Channel**')
-                    grouped = filtered_df.groupby(['Booked', 'Channel']).size().reset_index(name='counts')
-                    fig = px.bar(grouped, x='Booked', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
-                    st.plotly_chart(fig,use_container_width=True)
-                with rt:
-                    st.markdown('**Count Booked by Room type**')
-                    grouped = filtered_df.groupby(['Booked', 'Room Type']).size().reset_index(name='counts')
-                    fig = px.bar(grouped, x='Booked', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
-                    st.plotly_chart(fig,use_container_width=True)
-                col1, col2 = st.columns(2)
-                with col1:
-                    ch,rt = st.tabs(['Count LOS by Channel','Count LoS by Room type'])
-                    with ch:
-                        st.markdown('**Count LOS by Channel**')
-                        grouped = filtered_df.groupby(['Length of stay', 'Channel']).size().reset_index(name='counts')
-                        fig = px.bar(grouped, x='Length of stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
-                        st.plotly_chart(fig,use_container_width=True)
-                    with rt:
-                        st.markdown('**Count LOS by Room type**')
-                        grouped = filtered_df.groupby(['Length of stay', 'Room Type']).size().reset_index(name='counts')
-                        fig = px.bar(grouped, x='Length of stay', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
-                        st.plotly_chart(fig,use_container_width=True)
-                with col2:
-                    ch,rt = st.tabs(['Count LT by Channel','Count LT by Room type'])
-                    with ch:
-                        st.markdown('**Count LT by Channel**')
-                        grouped = filtered_df.groupby(['Lead time range', 'Channel']).size().reset_index(name='counts')
-                        fig = px.bar(grouped, x='Lead time range', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
-                        st.plotly_chart(fig,use_container_width=True)
-                    with rt:
-                        st.markdown('**Count LT by Room type**')
-                        grouped = filtered_df.groupby(['Lead time range', 'Room Type']).size().reset_index(name='counts')
-                        fig = px.bar(grouped, x='Lead time range', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
-                        st.plotly_chart(fig,use_container_width=True)
-                    
+
                 tab1, tab2, tab3 ,tab4, tab5 , tab6 ,tab7,tab0,tab8,tab9= st.tabs(["Average", "Median", "Statistic",'Data'
                                                                 ,'Bar Chart','Room roomnight by channel'
                                                                 ,'Room revenue by channel','Room type by channel','Flexible/NRF','RO/ABF'])
@@ -567,6 +509,129 @@ if uploaded_files:
                     total_count = counts['Count'].sum()
                     fig = px.treemap(counts, path=['Channel', 'RO/ABF'], values='Count', color='Count',color_continuous_scale='YlOrRd')
                     st.plotly_chart(fig, use_container_width=True)
+
+                table = filtered_df.copy()
+                table['Stay'] = table.apply(lambda row: pd.date_range(row['Check-in'], row['Check-out']- pd.Timedelta(days=1)), axis=1)
+                table = table.explode('Stay').reset_index(drop=True)
+                bb,ss = st.tabs(['**ADR by Room type and channel (Booked)**','**ADR by Room type and channel (Stay)**'])
+                with ss :
+                    ADR_S,LT_S,LOS_S = st.tabs(['**ADR by channal and room type**','**LT by channal and room type**','**LOS by channal and room type**'])
+                    with ADR_S:
+                        st.markdown('**avg ADR without comm and ABF by channal and room type (if you do not filter month, it would be all month)**')
+                        df_january = table[['Stay','Channel','Room Type','ADR']]
+                        avg_adr = df_january.groupby(['Channel', 'Room Type'])['ADR'].mean()
+                        result = avg_adr.reset_index().pivot_table(values='ADR', index='Channel', columns='Room Type', fill_value=np.nan)
+                        result.loc['Grand Total'] = result.mean()
+                        result.at['Grand Total', 'Channel'] = 'Grand Total'
+                        result['ALL ROOM TYPE'] = result.mean(axis=1)
+                        result = result.drop(columns='Channel')
+                        result = result.applymap(lambda x: int(x) if not pd.isna(x) else np.nan)
+                        st.write(result, use_container_width=True)
+                    with LOS_S:
+                        st.markdown('**avg LOS without comm and ABF by channal and room type (if you do not filter month, it would be all month)**')
+                        df_january = table[['Stay','Channel','Room Type','Length of stay']]
+                        avg_adr = df_january.groupby(['Channel', 'Room Type'])['Length of stay'].mean()
+                        result = avg_adr.reset_index().pivot_table(values='Length of stay', index='Channel', columns='Room Type', fill_value=np.nan)
+                        result.loc['Grand Total'] = result.mean()
+                        result.at['Grand Total', 'Channel'] = 'Grand Total'
+                        result['ALL ROOM TYPE'] = result.mean(axis=1)
+                        result = result.drop(columns='Channel')
+                        result = result.applymap(lambda x: int(x) if not pd.isna(x) else np.nan)
+                        st.write(result, use_container_width=True)
+                    with LT_S:
+                        st.markdown('**avg LT without comm and ABF by channal and room type (if you do not filter month, it would be all month)**')
+                        df_january = table[['Stay','Channel','Room Type','Lead time']]
+                        avg_adr = df_january.groupby(['Channel', 'Room Type'])['Lead time'].mean()
+                        result = avg_adr.reset_index().pivot_table(values='Lead time', index='Channel', columns='Room Type', fill_value=np.nan)
+                        result.loc['Grand Total'] = result.mean()
+                        result.at['Grand Total', 'Channel'] = 'Grand Total'
+                        result['ALL ROOM TYPE'] = result.mean(axis=1)
+                        result = result.drop(columns='Channel')
+                        result = result.applymap(lambda x: int(x) if not pd.isna(x) else np.nan)
+                        st.write(result, use_container_width=True)
+                with bb :
+                    ADR_S,LT_S,LOS_S = st.tabs(['**ADR by channal and room type**','**LT by channal and room type**','**LOS by channal and room type**'])
+                    with ADR_S:
+                        st.markdown('**avg ADR without comm and ABF by channal and room type (if you do not filter month, it would be all month)**')
+                        df_january = filtered_df[['Booked','Channel','Room Type','ADR']]
+                        avg_adr = df_january.groupby(['Channel', 'Room Type'])['ADR'].mean()
+                        result = avg_adr.reset_index().pivot_table(values='ADR', index='Channel', columns='Room Type', fill_value=np.nan)
+                        result.loc['Grand Total'] = result.mean()
+                        result.at['Grand Total', 'Channel'] = 'Grand Total'
+                        result['ALL ROOM TYPE'] = result.mean(axis=1)
+                        result = result.drop(columns='Channel')
+                        result = result.applymap(lambda x: int(x) if not pd.isna(x) else np.nan)
+                        st.write(result, use_container_width=True)
+                    with LOS_S:
+                        st.markdown('**avg LOS without comm and ABF by channal and room type (if you do not filter month, it would be all month)**')
+                        df_january = filtered_df[['Booked','Channel','Room Type','Length of stay']]
+                        avg_adr = df_january.groupby(['Channel', 'Room Type'])['Length of stay'].mean()
+                        result = avg_adr.reset_index().pivot_table(values='Length of stay', index='Channel', columns='Room Type', fill_value=np.nan)
+                        result.loc['Grand Total'] = result.mean()
+                        result.at['Grand Total', 'Channel'] = 'Grand Total'
+                        result['ALL ROOM TYPE'] = result.mean(axis=1)
+                        result = result.drop(columns='Channel')
+                        result = result.applymap(lambda x: int(x) if not pd.isna(x) else np.nan)
+                        st.write(result, use_container_width=True)
+                    with LT_S:
+                        st.markdown('**avg LT without comm and ABF by channal and room type (if you do not filter month, it would be all month)**')
+                        df_january = filtered_df[['Booked','Channel','Room Type','Lead time']]
+                        avg_adr = df_january.groupby(['Channel', 'Room Type'])['Lead time'].mean()
+                        result = avg_adr.reset_index().pivot_table(values='Lead time', index='Channel', columns='Room Type', fill_value=np.nan)
+                        result.loc['Grand Total'] = result.mean()
+                        result.at['Grand Total', 'Channel'] = 'Grand Total'
+                        result['ALL ROOM TYPE'] = result.mean(axis=1)
+                        result = result.drop(columns='Channel')
+                        result = result.applymap(lambda x: int(x) if not pd.isna(x) else np.nan)
+                        st.write(result, use_container_width=True)
+                        
+                channels = filtered_df['Channel'].unique()
+                num_colors = len(channels)
+                existing_colors = ['#636EFA', '#EF553B', '#00CC96', '#AB63FA', '#FFA15A', '#19D3F3', '#FF6692', '#B6E880', '#FF97FF', '#6392FF']
+                additional_colors = ['#FFD700', '#8B008B', '#00FF00']
+                combined_colors = existing_colors + additional_colors
+                colors = combined_colors
+                color_scale =  {channel: colors[i % num_colors] for i, channel in enumerate(channels)}
+                color_scale1 =  {channel: colors[i % num_colors] for i, channel in enumerate(channels)}
+                
+                ch,rt = st.tabs(['Count Booked by Channel','Count Booked by Room type'])
+                with ch:
+                    st.markdown('**Count Booked by Channel**')
+                    grouped = filtered_df.groupby(['Booked', 'Channel']).size().reset_index(name='counts')
+                    fig = px.bar(grouped, x='Booked', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+                    st.plotly_chart(fig,use_container_width=True)
+                with rt:
+                    st.markdown('**Count Booked by Room type**')
+                    grouped = filtered_df.groupby(['Booked', 'Room Type']).size().reset_index(name='counts')
+                    fig = px.bar(grouped, x='Booked', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
+                    st.plotly_chart(fig,use_container_width=True)
+                col1, col2 = st.columns(2)
+                with col1:
+                    ch,rt = st.tabs(['Count LOS by Channel','Count LoS by Room type'])
+                    with ch:
+                        st.markdown('**Count LOS by Channel**')
+                        grouped = filtered_df.groupby(['Length of stay', 'Channel']).size().reset_index(name='counts')
+                        fig = px.bar(grouped, x='Length of stay', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+                        st.plotly_chart(fig,use_container_width=True)
+                    with rt:
+                        st.markdown('**Count LOS by Room type**')
+                        grouped = filtered_df.groupby(['Length of stay', 'Room Type']).size().reset_index(name='counts')
+                        fig = px.bar(grouped, x='Length of stay', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
+                        st.plotly_chart(fig,use_container_width=True)
+                with col2:
+                    ch,rt = st.tabs(['Count LT by Channel','Count LT by Room type'])
+                    with ch:
+                        st.markdown('**Count LT by Channel**')
+                        grouped = filtered_df.groupby(['Lead time range', 'Channel']).size().reset_index(name='counts')
+                        fig = px.bar(grouped, x='Lead time range', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+                        st.plotly_chart(fig,use_container_width=True)
+                    with rt:
+                        st.markdown('**Count LT by Room type**')
+                        grouped = filtered_df.groupby(['Lead time range', 'Room Type']).size().reset_index(name='counts')
+                        fig = px.bar(grouped, x='Lead time range', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
+                        st.plotly_chart(fig,use_container_width=True)
+                    
+
                     
                 filtered_df['Booked'] = pd.to_datetime(filtered_df['Booked'])
                 filtered_df['Day Name'] = filtered_df['Booked'].dt.strftime('%A')
@@ -1242,7 +1307,7 @@ if uploaded_files:
                                 filtered_df = all3[all3['Room Type'].isin(selected_room_types)]
                 else:
                     filtered_df = all3
-
+                table = filtered_df.copy()
                 filtered_df['Stay'] = filtered_df.apply(lambda row: pd.date_range(row['Check-in'], row['Check-out']- pd.Timedelta(days=1)), axis=1)
                 filtered_df = filtered_df.explode('Stay').reset_index(drop=True)
                 filtered_df = filtered_df[['Stay','Check-in','Guest names','Channel','ADR','Length of stay','Lead time','Lead time range','RN','Quantity','Room Type','Room']]
@@ -1250,23 +1315,12 @@ if uploaded_files:
                 filtered_df['Day Name'] = filtered_df['Stay'].dt.strftime('%A')
                 filtered_df['Week of Year'] = filtered_df['Stay'].dt.isocalendar().week
 
-                month_dict = {v: k for k, v in enumerate(calendar.month_name)}
-                months = list(calendar.month_name)[1:]
-                selected_month = st.multiselect('Select a month stay', months)
-
-                selected_year = st.selectbox('Select a year', ['2022', '2023', '2024','2025','2026'], index=1)
-
-                if selected_month and selected_year:
-                    selected_month_nums = [month_dict[month_name] for month_name in selected_month]
-                    filtered_df = filtered_df[
-                        (filtered_df['Stay'].dt.month.isin(selected_month_nums)) &
-                        (filtered_df['Stay'].dt.year == int(selected_year))]
-                    
-                elif selected_month:
-                    selected_month_nums = [month_dict[month_name] for month_name in selected_month]
-                    filtered_df = filtered_df[filtered_df['Stay'].dt.month.isin(selected_month_nums)]
-                elif selected_year:
-                    filtered_df = filtered_df[filtered_df['Stay'].dt.year == int(selected_year)]
+                col1,col2 = st.columns(2)
+                with col1:
+                    start_date = st.date_input('Select a start date', value=filtered_df['Booked'].min())
+                with col2:
+                    end_date = st.date_input('Select an end date', value=filtered_df['Booked'].max())
+                filtered_df = filtered_df[(filtered_df['Stay'] >= pd.Timestamp(start_date)) & (filtered_df['Stay'] <= pd.Timestamp(end_date))]
 
                 col1 , col2 = st.columns(2)
                 with col2:
@@ -1285,6 +1339,7 @@ if uploaded_files:
                         filtered_df = filtered_df[(filtered_df['Length of stay'] >= LOS_min) & (filtered_df['Length of stay'] <= LOS_max)]
                     else:
                         filtered_df = filtered_df.copy()
+                
 
                 tab1, tab2, tab3 ,tab4, tab5 , tab6 ,tab7,tab8,tab9= st.tabs(["Average", "Median", "Statistic",'Data'
                                                                     ,'Bar Chart','Room roomnight by channel'
@@ -1365,38 +1420,74 @@ if uploaded_files:
                     total_count = counts['Count'].sum()
                     fig = px.treemap(counts, path=['Channel', 'RO/ABF'], values='Count', color='Count',color_continuous_scale='YlOrRd')
                     st.plotly_chart(fig, use_container_width=True)
-                    
-                ADR_S,LT_S,LOS_S = st.tabs(['**ADR by channal and room type**','**LT by channal and room type**','**LOS by channal and room type**'])
-                with ADR_S:
-                    st.markdown('**avg ADR without comm and ABF by channal and room type (if you do not filter month, it would be all month)**')
-                    df_january = filtered_df[['Stay','Channel','Room Type','ADR']]
-                    avg_adr = df_january.groupby(['Channel', 'Room Type'])['ADR'].mean()
-                    result = avg_adr.reset_index().pivot_table(values='ADR', index='Channel', columns='Room Type', fill_value=np.nan)
-                    avg_adr_all_room_type = df_january.groupby(['Channel'])['ADR'].mean()
-                    result['ALL ROOM TYPE'] = avg_adr_all_room_type
-                    result.loc['GRAND TOTAL'] = result.mean()  # Calculate the grand total row
-                    result = result.applymap(lambda x: int(x) if not pd.isna(x) else np.nan)
-                    st.write(result, use_container_width=True)
-                with LOS_S:
-                    st.markdown('**avg LOS without comm and ABF by channal and room type (if you do not filter month, it would be all month)**')
-                    df_january = filtered_df[['Stay','Channel','Room Type','Length of stay']]
-                    avg_adr = df_january.groupby(['Channel', 'Room Type'])['Length of stay'].mean()
-                    result = avg_adr.reset_index().pivot_table(values='Length of stay', index='Channel', columns='Room Type', fill_value=np.nan)
-                    avg_adr_all_room_type = df_january.groupby(['Channel'])['Length of stay'].mean()
-                    result['ALL ROOM TYPE'] = avg_adr_all_room_type
-                    result.loc['GRAND TOTAL'] = result.mean()  # Calculate the grand total row
-                    result = result.applymap(lambda x: int(x) if not pd.isna(x) else np.nan)
-                    st.write(result, use_container_width=True)
-                with LT_S:
-                    st.markdown('**avg LT without comm and ABF by channal and room type (if you do not filter month, it would be all month)**')
-                    df_january = filtered_df[['Stay','Channel','Room Type','Lead time']]
-                    avg_adr = df_january.groupby(['Channel', 'Room Type'])['Lead time'].mean()
-                    result = avg_adr.reset_index().pivot_table(values='Lead time', index='Channel', columns='Room Type', fill_value=np.nan)
-                    avg_adr_all_room_type = df_january.groupby(['Channel'])['Lead time'].mean()
-                    result['ALL ROOM TYPE'] = avg_adr_all_room_type
-                    result.loc['GRAND TOTAL'] = result.mean()  # Calculate the grand total row
-                    result = result.applymap(lambda x: int(x) if not pd.isna(x) else np.nan)
-                    st.write(result, use_container_width=True)
+                bb,ss = st.tabs(['**ADR by Room type and channel (Stay)**','**ADR by Room type and channel (Booked)**'])
+                with bb:
+                    ADR_S,LT_S,LOS_S = st.tabs(['**ADR by channal and room type**','**LT by channal and room type**','**LOS by channal and room type**'])
+                    with ADR_S:
+                        st.markdown('**avg ADR without comm and ABF by channal and room type (if you do not filter month, it would be all month)**')
+                        df_january = filtered_df[['Stay','Channel','Room Type','ADR']]
+                        avg_adr = df_january.groupby(['Channel', 'Room Type'])['ADR'].mean()
+                        result = avg_adr.reset_index().pivot_table(values='ADR', index='Channel', columns='Room Type', fill_value=np.nan)
+                        avg_adr_all_room_type = df_january.groupby(['Channel'])['ADR'].mean()
+                        result['ALL ROOM TYPE'] = avg_adr_all_room_type
+                        result.loc['GRAND TOTAL'] = result.mean()  # Calculate the grand total row
+                        result = result.applymap(lambda x: int(x) if not pd.isna(x) else np.nan)
+                        st.write(result, use_container_width=True)
+                    with LOS_S:
+                        st.markdown('**avg LOS without comm and ABF by channal and room type (if you do not filter month, it would be all month)**')
+                        df_january = filtered_df[['Stay','Channel','Room Type','Length of stay']]
+                        avg_adr = df_january.groupby(['Channel', 'Room Type'])['Length of stay'].mean()
+                        result = avg_adr.reset_index().pivot_table(values='Length of stay', index='Channel', columns='Room Type', fill_value=np.nan)
+                        avg_adr_all_room_type = df_january.groupby(['Channel'])['Length of stay'].mean()
+                        result['ALL ROOM TYPE'] = avg_adr_all_room_type
+                        result.loc['GRAND TOTAL'] = result.mean()  # Calculate the grand total row
+                        result = result.applymap(lambda x: int(x) if not pd.isna(x) else np.nan)
+                        st.write(result, use_container_width=True)
+                    with LT_S:
+                        st.markdown('**avg LT without comm and ABF by channal and room type (if you do not filter month, it would be all month)**')
+                        df_january = filtered_df[['Stay','Channel','Room Type','Lead time']]
+                        avg_adr = df_january.groupby(['Channel', 'Room Type'])['Lead time'].mean()
+                        result = avg_adr.reset_index().pivot_table(values='Lead time', index='Channel', columns='Room Type', fill_value=np.nan)
+                        avg_adr_all_room_type = df_january.groupby(['Channel'])['Lead time'].mean()
+                        result['ALL ROOM TYPE'] = avg_adr_all_room_type
+                        result.loc['GRAND TOTAL'] = result.mean()  # Calculate the grand total row
+                        result = result.applymap(lambda x: int(x) if not pd.isna(x) else np.nan)
+                        st.write(result, use_container_width=True)
+                    with ss:
+                        ADR_S,LT_S,LOS_S = st.tabs(['**ADR by channal and room type**','**LT by channal and room type**','**LOS by channal and room type**'])
+                        with ADR_S:
+                            st.markdown('**avg ADR without comm and ABF by channal and room type (if you do not filter month, it would be all month)**')
+                            df_january = table[['Booked','Channel','Room Type','ADR']]
+                            avg_adr = df_january.groupby(['Channel', 'Room Type'])['ADR'].mean()
+                            result = avg_adr.reset_index().pivot_table(values='ADR', index='Channel', columns='Room Type', fill_value=np.nan)
+                            result.loc['Grand Total'] = result.mean()
+                            result.at['Grand Total', 'Channel'] = 'Grand Total'
+                            result['ALL ROOM TYPE'] = result.mean(axis=1)
+                            result = result.drop(columns='Channel')
+                            result = result.applymap(lambda x: int(x) if not pd.isna(x) else np.nan)
+                            st.write(result, use_container_width=True)
+                        with LOS_S:
+                            st.markdown('**avg LOS without comm and ABF by channal and room type (if you do not filter month, it would be all month)**')
+                            df_january = table[['Booked','Channel','Room Type','Length of stay']]
+                            avg_adr = df_january.groupby(['Channel', 'Room Type'])['Length of stay'].mean()
+                            result = avg_adr.reset_index().pivot_table(values='Length of stay', index='Channel', columns='Room Type', fill_value=np.nan)
+                            result.loc['Grand Total'] = result.mean()
+                            result.at['Grand Total', 'Channel'] = 'Grand Total'
+                            result['ALL ROOM TYPE'] = result.mean(axis=1)
+                            result = result.drop(columns='Channel')
+                            result = result.applymap(lambda x: int(x) if not pd.isna(x) else np.nan)
+                            st.write(result, use_container_width=True)
+                        with LT_S:
+                            st.markdown('**avg LT without comm and ABF by channal and room type (if you do not filter month, it would be all month)**')
+                            df_january = table[['Booked','Channel','Room Type','Lead time']]
+                            avg_adr = df_january.groupby(['Channel', 'Room Type'])['Lead time'].mean()
+                            result = avg_adr.reset_index().pivot_table(values='Lead time', index='Channel', columns='Room Type', fill_value=np.nan)
+                            result.loc['Grand Total'] = result.mean()
+                            result.at['Grand Total', 'Channel'] = 'Grand Total'
+                            result['ALL ROOM TYPE'] = result.mean(axis=1)
+                            result = result.drop(columns='Channel')
+                            result = result.applymap(lambda x: int(x) if not pd.isna(x) else np.nan)
+                            st.write(result, use_container_width=True)
 
                 st.markdown('**You can zoom in**')
 
