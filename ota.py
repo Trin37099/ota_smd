@@ -133,11 +133,11 @@ if uploaded_files:
                         return 'DELUXE POOL VIEW'
                     elif re.search(r'\bDELUXE ROOM WITH KITCHENETTE\b|\bDELUXE DOUBLE ROOM\b|\bDELUXE DOUBLE BED ROOM WITH KITCHENETTE\b|\DOUBLE DELUXE\b', room_type):
                         return 'DELUXE'
-                    elif re.search(r'\bGRAND SUITE WITH DOUBLE BED\b|\bSUITE GRAND SUITE\b|\bGRAND SUITES ROOM WITH KITCHENETTE\(DOUBLE BED\)\b|\bGRAND SUITE WITH KITCHENETTE\b|\bGRAND SUITE ROOM WITH KITCHENETTE\b|\bGRAND SUITE  WITH KITCHENETTE\b|\bGRAND SUITE ROOM DOUBLE BED WITH KITCHENETTE\b|\bGRAND SUITE KITCHENETTE\b|\bGRAND SUITES ROOM WITH KITCHENETTE\(TWIN BED\)\b|\bGRAND SUITE ROOM TWIN BED WITH KITCHENETTE\b|GRAND SUITES ROOM WITH KITCHENETTE', room_type):
+                    elif re.search(r'\bGRAND SUITE WITH DOUBLE BED\b|\bSUITE GRAND SUITE\b|\bGRAND SUITES ROOM WITH KITCHENETTE\(DOUBLE BED\)\b|\bGRAND SUITE WITH KITCHENETTE\b|\bGRAND SUITE ROOM WITH KITCHENETTE\b|\bGRAND SUITE  WITH KITCHENETTE\b|\bGRAND SUITE ROOM DOUBLE BED WITH KITCHENETTE\b|\bGRAND SUITE KITCHENETTE\b|\bGRAND SUITES ROOM WITH KITCHENETTE\(TWIN BED\)\b|\bGRAND SUITE ROOM TWIN BED WITH KITCHENETTE\b', room_type):
                         return 'GRAND SUITE'
                     elif re.search(r'\bGRAND SUITE POOL VIEW ROOM\b|\bGRAND SUITE POOL VIEW ROOM WITH KITCHENETTE\b|\bGRAND POOL VIEW SUITE WITH KITCHENETTE\b|\bGRAND SUITE WITH POOL VIEW\b|\bSUITE GRAND POOL VIEW\b|\bGRAND SUITE POOL VIEW WITH KITCHENETTE\b|\bGRAND SUITES POOL VIEW ROOM WITH KITCHENETTE\b|\bGRAND SUITE POOL VIEW ROOM DOUBLE BED WITH KITCHENETTE\b', room_type):
                         return 'GRAND SUITE POOL VIEW'
-                    elif re.search(r'\bTWO BEDROOM SUITE\b|\bBEDROOM FAMILY SUITE WITH KITCHENETTE\b|2|\bFAMILY SUITE TWO BEDROOM WITH KITCHENETTE\b|\bFAMILY TWO\b|\bFAMILY ROOM FAMILY TWO BEDROOMS\b|\bFAMILY SUITES TWO BEDROOM\b|\bTWO BEDROOM FAMILY SUITE WITH KITCHENETTE\b|TWO', room_type):
+                    elif re.search(r'\bTWO BEDROOM SUITE\b|\bBEDROOM FAMILY SUITE WITH KITCHENETTE\b|\bFAMILY SUITE TWO BEDROOM WITH KITCHENETTE\b|\bFAMILY TWO\b|\bFAMILY ROOM FAMILY TWO BEDROOMS\b|\bFAMILY SUITES TWO BEDROOM\b|\bTWO BEDROOM FAMILY SUITE WITH KITCHENETTE\b|TWO', room_type):
                         return 'TWO BEDROOM SUITE'
                     elif re.search(r'\bDELUXE CITY VIEW ROOM\b|\bDELUXE DOUBLE OR TWIN ROOM WITH CITY VIEW\b|\bDELUXE CITY VIEW ROOM\b|\bDELUXE CITY VIEW ROOM WITH KITCHENETTE\b|\bDELUXE CITY VIEW ROOM DOUBLE OR TWIN BED WITH KITCHENETTE\b|\bDOUBLE OR TWIN DELUXE CITY VIEW DOUBLE OR TWIN\b', room_type):
                         return 'DELUXE CITY VIEW'
@@ -270,14 +270,6 @@ if uploaded_files:
                     return 'UNKNOWN'
                 else:
                     return 'Flexible'
-            date_formats = ["%d/%m/%Y", "%Y-%m-%d"]
-            def parse_date(date_string):
-                for format in date_formats:
-                    try:
-                       return pd.to_datetime(date_string, format=format)
-                    except ValueError:
-                        pass
-                return pd.NaT
 
             def convert_ABF(room_type):
                 if re.search(r'\bBREAKFAST\b|\bWITH BREAKFAST\b|\bBREAKFAST INCLUDED\b', room_type):
@@ -300,20 +292,22 @@ if uploaded_files:
                             ,'Booked-on date'
                             ,'Total price']]
                 all1 = all1.dropna()
-                date_formats = ["%d/%m/%Y", "%Y-%m-%d"]
-                all1["Check-out"] = all1["Check-out"].apply(parse_date)
-                all1["Check-in"] = all1["Check-in"].apply(parse_date)
+
+                all1["Check-in"] = pd.to_datetime(all1["Check-in"])
                 all1['Booked-on date'] = pd.to_datetime(all1['Booked-on date'])
                 all1['Booked'] = all1['Booked-on date'].dt.strftime('%m/%d/%Y')
                 all1['Booked'] = pd.to_datetime(all1['Booked'])
-                all1["Check-out"] = pd.to_datetime(all1["Check-out"], format=date_formats)
+                all1["Check-out"] = pd.to_datetime(all1["Check-out"])
                 all1["Length of stay"] = (all1["Check-out"] - all1["Check-in"]).dt.days
                 all1["Lead time"] = (all1["Check-in"] - all1["Booked"]).dt.days
-                value_ranges = [-1, 0, 1, 2, 3, 4, 5, 6, 7,8, 14, 30, 90, 120]
-                value_ranges1 = [1,2,3, 4,5,6,7,8,9,10,14,30,45,60]
-                labels = ['-one', 'zero', 'one', 'two', 'three', 'four', 'five', 'six','seven', '8-14', '14-30', '31-90', '90-120', '120+']
+                LT1 = [-1, 0, 1, 2, 3, 4, 5, 6, 7,8, 14, 30, 90, 120]
+                LT2 = ['-one', 'zero', 'one', 'two', 'three', 'four', 'five', 'six','seven', '8-14', '14-30', '31-90', '90-120', '120+']
+                LT11 = [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30,31,90, 120, float('inf')]
+                LT22 = ['-one.', 'zero.', 'one.', 'two', 'three', 'four', 'five', 'six.', 'seven.', '.8.', '.9.', '.10.', '.11.', '.12.', '.13.', '.14.', '.15.', '.16.', '.17.', '.18.', '.19.', '.20.', '21.', '22.', '23.', '.24.', '25.', '.26.', '27.', '.28.', '.29.', '.30.', '31-90.', '91-120', '120.+']
+                value_ranges1 = [1,2,3,4,5,6,7,8,9,10,14,30,45,60]
                 labels1 = ['one', 'two', 'three', 'four', 'five', 'six','seven','eight', 'nine', 'ten', '14-30', '30-45','45-60', '60+']
-                all1['Lead time range'] = pd.cut(all1['Lead time'], bins=value_ranges + [float('inf')], labels=labels, right=False)
+                all1['Lead time range'] = pd.cut(all1['Lead time'], bins=LT1 + [float('inf')], labels=LT2, right=False)
+                all1['Lead time range1'] = pd.cut(all1['Lead time'], bins=LT11, labels=LT22, right=False)
                 all1['LOS range'] = pd.cut(all1['Length of stay'], bins=value_ranges1 + [float('inf')], labels=labels1, right=False)
 
                 all1['Room'] = all1['Room'].str.upper()
@@ -357,6 +351,7 @@ if uploaded_files:
                             ,'RO/ABF'
                             ,'F/NRF'
                             ,'Lead time range'
+                            ,'Lead time range1'
                             ,'LOS range']]
                 return all2
 
@@ -736,38 +731,106 @@ if uploaded_files:
                     st.markdown('**Pivot table by lead time**')
                     t1,t2,t3,t4,t5 = st.tabs(['ADR','LOS','RN','Portion','Pie chart'])
                     with t1:
-                        col1, col2 = st.columns(2)
-                        #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
-                        col1.markdown('**Average ADR by LT and Room Type**')
-                        #st.bar_chart(filtered_df_pi)
-                        adr_avg = filtered_df.groupby(['Lead time range', 'Room Type'])['ADR'].mean().reset_index()
-                        fig = px.bar(adr_avg, x='Lead time range', y='ADR', color='Room Type',text_auto=True)
-                        fig.update_layout(legend=dict(orientation="h",yanchor="bottom",y=1.02,xanchor="right",x=1))
-                        col1.plotly_chart(fig, use_container_width=True)
-                        #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
-                        col2.markdown('**Average ADR by LT**')
-                        #st.bar_chart(filtered_df_pi)
-                        adr_avg = filtered_df.groupby(['Lead time range'])['ADR'].mean().reset_index()
-                        fig = px.bar(adr_avg, x='Lead time range', y='ADR',text_auto=True)
-                        col2.plotly_chart(fig, use_container_width=True)
-                        col1, col2 = st.columns(2)
-                        with col1:
-                            st.markdown('**Count ADR by LT**')
-                            grouped = filtered_df.groupby(['Lead time range', 'ADR']).size().reset_index(name='counts')
-                            fig = px.bar(grouped, x='Lead time range', y='counts', color='ADR',color_discrete_map=color_scale, barmode='stack')
-                            st.plotly_chart(fig,use_container_width=True)
-                        with col2:
-                            ch,rt = st.tabs(['Count LT by Channel','Count LT by Room type'])
-                            with ch:
-                                st.markdown('**Count LT by Channel**')
-                                grouped = filtered_df.groupby(['Lead time range', 'Channel']).size().reset_index(name='counts')
-                                fig = px.bar(grouped, x='Lead time range', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+                        l1,l2,l3 = st.tabs(['Lead time (0-7)','Lead time (0-30)','Lead time non grouping'])
+                        with l1:
+                            col1, col2 = st.columns(2)
+                            #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
+                            col1.markdown('**Average ADR by LT and Room Type**')
+                            #st.bar_chart(filtered_df_pi)
+                            adr_avg = filtered_df.groupby(['Lead time range', 'Room Type'])['ADR'].mean().reset_index()
+                            fig = px.bar(adr_avg, x='Lead time range', y='ADR', color='Room Type',text_auto=True)
+                            fig.update_layout(legend=dict(orientation="h",yanchor="bottom",y=1.02,xanchor="right",x=1))
+                            col1.plotly_chart(fig, use_container_width=True)
+                            #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
+                            col2.markdown('**Average ADR by LT**')
+                            #st.bar_chart(filtered_df_pi)
+                            adr_avg = filtered_df.groupby(['Lead time range'])['ADR'].mean().reset_index()
+                            fig = px.bar(adr_avg, x='Lead time range', y='ADR',text_auto=True)
+                            col2.plotly_chart(fig, use_container_width=True)
+                            col1, col2 = st.columns(2)
+                            with col1:
+                                st.markdown('**Count ADR by LT**')
+                                grouped = filtered_df.groupby(['Lead time range', 'ADR']).size().reset_index(name='counts')
+                                fig = px.bar(grouped, x='Lead time range', y='counts', color='ADR',color_discrete_map=color_scale, barmode='stack')
                                 st.plotly_chart(fig,use_container_width=True)
-                            with rt:
-                                st.markdown('**Count LT by Room type**')
-                                grouped = filtered_df.groupby(['Lead time range', 'Room Type']).size().reset_index(name='counts')
-                                fig = px.bar(grouped, x='Lead time range', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
+                            with col2:
+                                ch,rt = st.tabs(['Count LT by Channel','Count LT by Room type'])
+                                with ch:
+                                    st.markdown('**Count LT by Channel**')
+                                    grouped = filtered_df.groupby(['Lead time range', 'Channel']).size().reset_index(name='counts')
+                                    fig = px.bar(grouped, x='Lead time range', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+                                    st.plotly_chart(fig,use_container_width=True)
+                                with rt:
+                                    st.markdown('**Count LT by Room type**')
+                                    grouped = filtered_df.groupby(['Lead time range', 'Room Type']).size().reset_index(name='counts')
+                                    fig = px.bar(grouped, x='Lead time range', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
+                                    st.plotly_chart(fig,use_container_width=True)
+                        with l2:
+                            col1, col2 = st.columns(2)
+                            #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
+                            col1.markdown('**Average ADR by LT and Room Type**')
+                            #st.bar_chart(filtered_df_pi)
+                            adr_avg = filtered_df.groupby(['Lead time range1', 'Room Type'])['ADR'].mean().reset_index()
+                            fig = px.bar(adr_avg, x='Lead time range1', y='ADR', color='Room Type',text_auto=True)
+                            fig.update_layout(legend=dict(orientation="h",yanchor="bottom",y=1.02,xanchor="right",x=1))
+                            col1.plotly_chart(fig, use_container_width=True)
+                            #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
+                            col2.markdown('**Average ADR by LT**')
+                            #st.bar_chart(filtered_df_pi)
+                            adr_avg = filtered_df.groupby(['Lead time range1'])['ADR'].mean().reset_index()
+                            fig = px.bar(adr_avg, x='Lead time range1', y='ADR',text_auto=True)
+                            col2.plotly_chart(fig, use_container_width=True)    
+                            col1, col2 = st.columns(2)
+                            with col1:
+                                st.markdown('**Count ADR by LT**')
+                                grouped = filtered_df.groupby(['Lead time range1', 'ADR']).size().reset_index(name='counts')
+                                fig = px.bar(grouped, x='Lead time range1', y='counts', color='ADR',color_discrete_map=color_scale, barmode='stack')
                                 st.plotly_chart(fig,use_container_width=True)
+                            with col2:
+                                ch,rt = st.tabs(['Count LT by Channel','Count LT by Room type'])
+                                with ch:
+                                    st.markdown('**Count LT by Channel**')
+                                    grouped = filtered_df.groupby(['Lead time range1', 'Channel']).size().reset_index(name='counts')
+                                    fig = px.bar(grouped, x='Lead time range1', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+                                    st.plotly_chart(fig,use_container_width=True)
+                                with rt:
+                                    st.markdown('**Count LT by Room type**')
+                                    grouped = filtered_df.groupby(['Lead time range1', 'Room Type']).size().reset_index(name='counts')
+                                    fig = px.bar(grouped, x='Lead time range1', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
+                                    st.plotly_chart(fig,use_container_width=True)      
+                        with l3:
+                            col1, col2 = st.columns(2)
+                            #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
+                            col1.markdown('**Average ADR by LT and Room Type**')
+                            #st.bar_chart(filtered_df_pi)
+                            adr_avg = filtered_df.groupby(['Lead time', 'Room Type'])['ADR'].mean().reset_index()
+                            fig = px.bar(adr_avg, x='Lead time', y='ADR', color='Room Type',text_auto=True)
+                            fig.update_layout(legend=dict(orientation="h",yanchor="bottom",y=1.02,xanchor="right",x=1))
+                            col1.plotly_chart(fig, use_container_width=True)
+                            #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
+                            col2.markdown('**Average ADR by LT**')
+                            #st.bar_chart(filtered_df_pi)
+                            adr_avg = filtered_df.groupby(['Lead time'])['ADR'].mean().reset_index()
+                            fig = px.bar(adr_avg, x='Lead time', y='ADR',text_auto=True)
+                            col2.plotly_chart(fig, use_container_width=True)    
+                            col1, col2 = st.columns(2)
+                            with col1:
+                                st.markdown('**Count ADR by LT**')
+                                grouped = filtered_df.groupby(['Lead time', 'ADR']).size().reset_index(name='counts')
+                                fig = px.bar(grouped, x='Lead time', y='counts', color='ADR',color_discrete_map=color_scale, barmode='stack')
+                                st.plotly_chart(fig,use_container_width=True)
+                            with col2:
+                                ch,rt = st.tabs(['Count LT by Channel','Count LT by Room type'])
+                                with ch:
+                                    st.markdown('**Count LT by Channel**')
+                                    grouped = filtered_df.groupby(['Lead time', 'Channel']).size().reset_index(name='counts')
+                                    fig = px.bar(grouped, x='Lead time', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
+                                    st.plotly_chart(fig,use_container_width=True)
+                                with rt:
+                                    st.markdown('**Count LT by Room type**')
+                                    grouped = filtered_df.groupby(['Lead time', 'Room Type']).size().reset_index(name='counts')
+                                    fig = px.bar(grouped, x='Lead time', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
+                                    st.plotly_chart(fig,use_container_width=True)   
                     with t2:
                         col1, col2 = st.columns(2)
                         #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
