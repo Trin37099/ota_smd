@@ -28,9 +28,17 @@ hotel_select = st.selectbox("Please choose a property to get started", ["THE GRA
 st.markdown('**Please Upload CSV Files**')
 uploaded_files = st.file_uploader("Choose a CSV file", type='CSV', accept_multiple_files=True)
 if uploaded_files:
+    all= []
     for uploaded_file in uploaded_files:
         try:
-            all = pd.read_csv(uploaded_file, thousands=',')
+            for uploaded_file in uploaded_files:
+                df = pd.read_csv(uploaded_file, thousands=',')
+                all.append(df)
+        except Exception as e:
+            st.write(f"Error reading file: {uploaded_file.name}")
+            st.write(e)
+    if all:
+            all = pd.concat(all)
 
             def clean_room_type(room_type):
                 if ' X '  in room_type:
@@ -1595,9 +1603,7 @@ if uploaded_files:
                             grouped = filtered_df.groupby(['Stay', 'Room Type']).size().reset_index(name='counts')
                             fig = px.bar(grouped, x='Stay', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
                             st.plotly_chart(fig,use_container_width=True)
-        except Exception as e:
-            st.write(f"Error reading file: {uploaded_file.name}")
-            st.write(e)
+
 else:
     st.markdown("**No file uploaded.**")
     st.markdown('Upload the file from the **SiteMinder**, then select the Reservations and select the data type **Booked-on** or **Check-in** according to your purpose. And finally, **do not** forget to filter only **Booked.**')
