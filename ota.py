@@ -1033,47 +1033,7 @@ if uploaded_files:
                                     st.markdown('**Count LT by Room type**')
                                     grouped = filtered_df.groupby(['Lead time', 'Room Type']).size().reset_index(name='counts')
                                     fig = px.bar(grouped, x='Lead time', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
-                                    st.plotly_chart(fig,use_container_width=True)                grouped = filtered_df.groupby(['Lead time range', 'Channel']).size().reset_index(name='counts')
-                                fig = px.bar(grouped, x='Lead time range', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
-                                st.plotly_chart(fig,use_container_width=True)
-                            with rt:
-                                st.markdown('**Count LT by Room type**')
-                                grouped = filtered_df.groupby(['Lead time range', 'Room Type']).size().reset_index(name='counts')
-                                fig = px.bar(grouped, x='Lead time range', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
-                                st.plotly_chart(fig,use_container_width=True)
-                    with t3:
-                        col1, col2 = st.columns(2)
-                        #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
-                        col1.markdown('**Count RN by LT and Room Type**')
-                        #st.bar_chart(filtered_df_pi)
-                        adr_avg = filtered_df.groupby(['Lead time range', 'Room Type'])['RN'].size().reset_index()
-                        fig = px.bar(adr_avg, x='Lead time range', y='RN', color='Room Type',text_auto=True)
-                        fig.update_layout(legend=dict(orientation="h",yanchor="bottom",y=1.02,xanchor="right",x=1))
-                        col1.plotly_chart(fig, use_container_width=True)
-                        #filtered_df_pi = pd.pivot_table(filtered_df, index='Booked',values=['ADR'])
-                        col2.markdown('**Count RN by LT**')
-                        #st.bar_chart(filtered_df_pi)
-                        adr_avg = filtered_df.groupby(['Lead time range'])['RN'].size().reset_index()
-                        fig = px.bar(adr_avg, x='Lead time range', y='RN',text_auto=True)
-                        col2.plotly_chart(fig, use_container_width=True)
-                        col1, col2 = st.columns(2)
-                        with col1:
-                            st.markdown('**Count RN by LT**')
-                            grouped = filtered_df.groupby(['Lead time range', 'RN']).size().reset_index(name='counts')
-                            fig = px.bar(grouped, x='Lead time range', y='counts', color='RN',color_discrete_map=color_scale, barmode='stack')
-                            st.plotly_chart(fig,use_container_width=True)
-                        with col2:
-                            ch,rt = st.tabs(['Count LT by Channel','Count LT by Room type'])
-                            with ch:
-                                st.markdown('**Count LT by Channel**')
-                                grouped = filtered_df.groupby(['Lead time range', 'Channel']).size().reset_index(name='counts')
-                                fig = px.bar(grouped, x='Lead time range', y='counts', color='Channel',color_discrete_map=color_scale, barmode='stack')
-                                st.plotly_chart(fig,use_container_width=True)
-                            with rt:
-                                st.markdown('**Count LT by Room type**')
-                                grouped = filtered_df.groupby(['Lead time range', 'Room Type']).size().reset_index(name='counts')
-                                fig = px.bar(grouped, x='Lead time range', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
-                                st.plotly_chart(fig,use_container_width=True)
+                                    st.plotly_chart(fig,use_container_width=True) 
                     with t4:
                         los_counts = filtered_df['Lead time range'].value_counts().reset_index()
                         custom_order = ['-one', 'zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', '8-14', '14-30', '31-90', '90-120', '120+']
