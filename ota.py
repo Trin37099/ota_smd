@@ -1247,7 +1247,6 @@ if uploaded_files:
                 months = list(calendar.month_name)[1:]
                 selected_month = st.multiselect('Select a month stay', months)
 
-                # Assuming you have a select year input stored in the variable 'selected_year'
                 selected_year = st.selectbox('Select a year', ['2022', '2023', '2024','2025','2026'], index=1)
 
                 if selected_month and selected_year:
@@ -1360,34 +1359,37 @@ if uploaded_files:
                     fig = px.treemap(counts, path=['Channel', 'RO/ABF'], values='Count', color='Count',color_continuous_scale='YlOrRd')
                     st.plotly_chart(fig, use_container_width=True)
                     
-                ADR_S,LOS_S,LT_S = st.tabs(['**ADR by channel and room type**','**LOS by channel and room type**','**LT by channel and room type**'])
+                ADR_S,LT_S,LOS_S = st.tabs(['**ADR by channal and room type**','**LT by channal and room type**','**LOS by channal and room type**'])
                 with ADR_S:
                     st.markdown('**avg ADR without comm and ABF by channal and room type (if you do not filter month, it would be all month)**')
                     df_january = filtered_df[['Stay','Channel','Room Type','ADR']]
                     avg_adr = df_january.groupby(['Channel', 'Room Type'])['ADR'].mean()
-                    result = avg_adr.reset_index().pivot_table(values='ADR', index='Channel', columns='Room Type', fill_value='none')
+                    result = avg_adr.reset_index().pivot_table(values='ADR', index='Channel', columns='Room Type', fill_value=np.nan)
                     avg_adr_all_room_type = df_january.groupby(['Channel'])['ADR'].mean()
                     result['ALL ROOM TYPE'] = avg_adr_all_room_type
-                    result = result.applymap(lambda x: int(x)  if x != 'none' else 'none')
-                    st.write(result,use_container_width=True)
+                    result.loc['GRAND TOTAL'] = result.mean()  # Calculate the grand total row
+                    result = result.applymap(lambda x: int(x) if not pd.isna(x) else np.nan)
+                    st.write(result, use_container_width=True)
                 with LOS_S:
                     st.markdown('**avg LOS without comm and ABF by channal and room type (if you do not filter month, it would be all month)**')
                     df_january = filtered_df[['Stay','Channel','Room Type','Length of stay']]
                     avg_adr = df_january.groupby(['Channel', 'Room Type'])['Length of stay'].mean()
-                    result = avg_adr.reset_index().pivot_table(values='Length of stay', index='Channel', columns='Room Type', fill_value='none')
+                    result = avg_adr.reset_index().pivot_table(values='Length of stay', index='Channel', columns='Room Type', fill_value=np.nan)
                     avg_adr_all_room_type = df_january.groupby(['Channel'])['Length of stay'].mean()
                     result['ALL ROOM TYPE'] = avg_adr_all_room_type
-                    result = result.applymap(lambda x: int(x)  if x != 'none' else 'none')
-                    st.write(result,use_container_width=True)
+                    result.loc['GRAND TOTAL'] = result.mean()  # Calculate the grand total row
+                    result = result.applymap(lambda x: int(x) if not pd.isna(x) else np.nan)
+                    st.write(result, use_container_width=True)
                 with LT_S:
                     st.markdown('**avg LT without comm and ABF by channal and room type (if you do not filter month, it would be all month)**')
                     df_january = filtered_df[['Stay','Channel','Room Type','Lead time']]
                     avg_adr = df_january.groupby(['Channel', 'Room Type'])['Lead time'].mean()
-                    result = avg_adr.reset_index().pivot_table(values='Lead time', index='Channel', columns='Room Type', fill_value='none')
+                    result = avg_adr.reset_index().pivot_table(values='Lead time', index='Channel', columns='Room Type', fill_value=np.nan)
                     avg_adr_all_room_type = df_january.groupby(['Channel'])['Lead time'].mean()
                     result['ALL ROOM TYPE'] = avg_adr_all_room_type
-                    result = result.applymap(lambda x: int(x)  if x != 'none' else 'none')
-                    st.write(result,use_container_width=True)
+                    result.loc['GRAND TOTAL'] = result.mean()  # Calculate the grand total row
+                    result = result.applymap(lambda x: int(x) if not pd.isna(x) else np.nan)
+                    st.write(result, use_container_width=True)
 
                 st.markdown('**You can zoom in**')
 
