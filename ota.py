@@ -35,8 +35,7 @@ if uploaded_files:
                 df = pd.read_csv(uploaded_file, thousands=',')
                 all.append(df)
         except Exception as e:
-            st.write(f"Error reading file: {uploaded_file.name}")
-            st.write(e)
+            pass
     if all:
             all = pd.concat(all)
 
