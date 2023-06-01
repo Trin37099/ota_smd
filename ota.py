@@ -1323,9 +1323,9 @@ if uploaded_files:
 
                 col1,col2 = st.columns(2)
                 with col1:
-                    start_date = st.date_input('Select a start date', value=filtered_df['Booked'].min())
+                    start_date = st.date_input('Select a start date', value=filtered_df['Stay'].min())
                 with col2:
-                    end_date = st.date_input('Select an end date', value=filtered_df['Booked'].max())
+                    end_date = st.date_input('Select an end date', value=filtered_df['Stay'].max())
                 filtered_df = filtered_df[(filtered_df['Stay'] >= pd.Timestamp(start_date)) & (filtered_df['Stay'] <= pd.Timestamp(end_date))]
 
                 col1 , col2 = st.columns(2)
