@@ -535,7 +535,8 @@ if uploaded_files:
                         result = avg_adr.reset_index().pivot_table(values='Length of stay', index='Channel', columns='Room Type', fill_value=np.nan)
                         result.loc['Grand Total'] = result.mean()
                         result.at['Grand Total', 'Channel'] = 'Grand Total'
-                        result['ALL ROOM TYPE'] = result.mean(axis=1)
+                        avg_adr_all_room_type = df_january.groupby(['Channel'])['Length of stay'].mean()
+                        result['ALL ROOM TYPE'] = avg_adr_all_room_type
                         result = result.drop(columns='Channel')
                         result = result.applymap(lambda x: int(x) if not pd.isna(x) else np.nan)
                         st.write(result, use_container_width=True)
@@ -546,7 +547,8 @@ if uploaded_files:
                         result = avg_adr.reset_index().pivot_table(values='Lead time', index='Channel', columns='Room Type', fill_value=np.nan)
                         result.loc['Grand Total'] = result.mean()
                         result.at['Grand Total', 'Channel'] = 'Grand Total'
-                        result['ALL ROOM TYPE'] = result.mean(axis=1)
+                        avg_adr_all_room_type = df_january.groupby(['Channel'])['Lead time'].mean()
+                        result['ALL ROOM TYPE'] = avg_adr_all_room_type
                         result = result.drop(columns='Channel')
                         result = result.applymap(lambda x: int(x) if not pd.isna(x) else np.nan)
                         st.write(result, use_container_width=True)
@@ -559,7 +561,8 @@ if uploaded_files:
                         result = avg_adr.reset_index().pivot_table(values='ADR', index='Channel', columns='Room Type', fill_value=np.nan)
                         result.loc['Grand Total'] = result.mean()
                         result.at['Grand Total', 'Channel'] = 'Grand Total'
-                        result['ALL ROOM TYPE'] = result.mean(axis=1)
+                        avg_adr_all_room_type = df_january.groupby(['Channel'])['ADR'].mean()
+                        result['ALL ROOM TYPE'] = avg_adr_all_room_type
                         result = result.drop(columns='Channel')
                         result = result.applymap(lambda x: int(x) if not pd.isna(x) else np.nan)
                         st.write(result, use_container_width=True)
@@ -570,7 +573,8 @@ if uploaded_files:
                         result = avg_adr.reset_index().pivot_table(values='Length of stay', index='Channel', columns='Room Type', fill_value=np.nan)
                         result.loc['Grand Total'] = result.mean()
                         result.at['Grand Total', 'Channel'] = 'Grand Total'
-                        result['ALL ROOM TYPE'] = result.mean(axis=1)
+                        avg_adr_all_room_type = df_january.groupby(['Channel'])['Length of stay'].mean()
+                        result['ALL ROOM TYPE'] = avg_adr_all_room_type
                         result = result.drop(columns='Channel')
                         result = result.applymap(lambda x: int(x) if not pd.isna(x) else np.nan)
                         st.write(result, use_container_width=True)
@@ -581,7 +585,8 @@ if uploaded_files:
                         result = avg_adr.reset_index().pivot_table(values='Lead time', index='Channel', columns='Room Type', fill_value=np.nan)
                         result.loc['Grand Total'] = result.mean()
                         result.at['Grand Total', 'Channel'] = 'Grand Total'
-                        result['ALL ROOM TYPE'] = result.mean(axis=1)
+                        avg_adr_all_room_type = df_january.groupby(['Channel'])['Lead time'].mean()
+                        result['ALL ROOM TYPE'] = avg_adr_all_room_type
                         result = result.drop(columns='Channel')
                         result = result.applymap(lambda x: int(x) if not pd.isna(x) else np.nan)
                         st.write(result, use_container_width=True)
