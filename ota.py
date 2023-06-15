@@ -750,15 +750,7 @@ if uploaded_files:
                 else:
                     st.write('---')
                 
-                st.markdown('**Pivot table by LOS**')
-                channels = filtered_df1['Channel'].unique()
-                num_colors = len(channels)
-                existing_colors = ['#636EFA', '#EF553B', '#00CC96', '#AB63FA', '#FFA15A', '#19D3F3', '#FF6692', '#B6E880', '#FF97FF', '#6392FF']
-                additional_colors = ['#FFD700', '#8B008B', '#00FF00']
-                combined_colors = existing_colors + additional_colors
-                colors = combined_colors
-                color_scale =  {channel: colors[i % num_colors] for i, channel in enumerate(channels)}
-                if st.button('ADR_LT'):
+                if st.button('LT_BOOKED'):
                     col1, col2 = st.columns(2)
                     #filtered_df1_pi = pd.pivot_table(filtered_df1, index='Booked',values=['ADR'])
                     col1.markdown('**Average LT by booked and Room Type**')
@@ -794,15 +786,8 @@ if uploaded_files:
                 else:
                     st.write('---')
                 
-                st.markdown('**Pivot table by LOS**')
-                channels = filtered_df1['Channel'].unique()
-                num_colors = len(channels)
-                existing_colors = ['#636EFA', '#EF553B', '#00CC96', '#AB63FA', '#FFA15A', '#19D3F3', '#FF6692', '#B6E880', '#FF97FF', '#6392FF']
-                additional_colors = ['#FFD700', '#8B008B', '#00FF00']
-                combined_colors = existing_colors + additional_colors
-                colors = combined_colors
-                color_scale =  {channel: colors[i % num_colors] for i, channel in enumerate(channels)}
-                if st.button('ADR_LOS'):
+
+                if st.button('LOS_BOOKED'):
                     col1, col2 = st.columns(2)
                     #filtered_df1_pi = pd.pivot_table(filtered_df1, index='Booked',values=['ADR'])
                     col1.markdown('**Average LOS by booked and Room Type**')
@@ -837,7 +822,8 @@ if uploaded_files:
                             st.plotly_chart(fig,use_container_width=True)
                 else:
                     st.write('---')
-                if st.button('RN_LOS'):
+
+                if st.button('RN_BOOKED'):
                     col1, col2 = st.columns(2)
                     #filtered_df1_pi = pd.pivot_table(filtered_df1, index='Booked',values=['ADR'])
                     col1.markdown('**Average RN by booked and Room Type**')
@@ -881,7 +867,7 @@ if uploaded_files:
             colors = combined_colors
             color_scale =  {channel: colors[i % num_colors] for i, channel in enumerate(channels)}
             #t1,t2,t3,t4,t5 = st.tabs(['ADR','LOS','RN','Portion','Pie chart'])
-            if st.button('ADR_LT '):
+            if st.button('ADR_LT'):
                     l1,l2,l3 = st.tabs(['Lead time (0-7)','Lead time (0-30)','Lead time non grouping'])
                     with l1:
                         col1, col2 = st.columns(2)
@@ -983,7 +969,7 @@ if uploaded_files:
                                 fig = px.bar(grouped, x='Lead time', y='counts', color='Room Type',color_discrete_map=color_scale, barmode='stack')
                                 st.plotly_chart(fig,use_container_width=True)                                                     
             else:
-                    st.write('---')
+                    st.write('--')
             if st.button('LOS_LT'):
                     l1,l2,l3 = st.tabs(['Lead time (0-7)','Lead time (0-30)','Lead time non grouping'])
                     with l1:
@@ -1246,7 +1232,7 @@ if uploaded_files:
             combined_colors = existing_colors + additional_colors
             colors = combined_colors
             color_scale =  {channel: colors[i % num_colors] for i, channel in enumerate(channels)}
-            if st.button('ADR_LOS '):
+            if st.button('ADR_LOS'):
                 col1, col2 = st.columns(2)
                 #filtered_df1_pi = pd.pivot_table(filtered_df1, index='Booked',values=['ADR'])
                 col1.markdown('**Average ADR by LOS and Room Type**')
