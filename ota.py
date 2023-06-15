@@ -1246,7 +1246,7 @@ if uploaded_files:
             combined_colors = existing_colors + additional_colors
             colors = combined_colors
             color_scale =  {channel: colors[i % num_colors] for i, channel in enumerate(channels)}
-            if st.button('ADR_LOS'):
+            if st.button('ADR_LOS '):
                 col1, col2 = st.columns(2)
                 #filtered_df1_pi = pd.pivot_table(filtered_df1, index='Booked',values=['ADR'])
                 col1.markdown('**Average ADR by LOS and Room Type**')
